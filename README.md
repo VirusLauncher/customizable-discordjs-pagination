@@ -1,6 +1,8 @@
 # customizable-discordjs-pagination
-<p align="center">
+<p>
    <a href="https://www.npmjs.com/package/customizable-discordjs-pagination"><img src="https://nodei.co/npm/customizable-discordjs-pagination.png?downloadRank=true&downloads=true&downloadRank=true&stars=true" /></a>
+      <br/>
+   <a href="https://discord.gg/ju8kxnvnCw"><img src="https://discordapp.com/api/guilds/[SERVER ID]/widget.png?style=banner2" /></a>
 </p>
 This package features a fully customizable embed pagination for DiscordJS V13 and V14. The User can modify the buttons to their liking and enable/disable Select Menu.
 To Install: `npm i customizable-discordjs-pagination`
@@ -40,8 +42,8 @@ Pagination.V13Pagination(Discord, message, pages, buttons, timeout, slashMenu);
 ![Imgur](https://imgur.com/vKgBYog.jpg)
 
 ## Documentation
-For V13: Use ```V13Pagination(Discord, message, pages, buttons, timeout, slashMenu)```
-For V14: Use ```V14Pagination(Discord, message, pages, buttons, timeout, slashMenu)```
+- For V13: Use ```V13Pagination(Discord, message, pages, buttons, timeout, slashMenu)```
+- For V14: Use ```V14Pagination(Discord, message, pages, buttons, timeout, slashMenu)```
 
 ### Parameters
 | Name | Optional | Details |
