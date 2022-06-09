@@ -1,6 +1,6 @@
 # customizable-discordjs-pagination
 <p>
-   <a href="https://www.npmjs.com/package/customizable-discordjs-pagination"><img src="https://nodei.co/npm/customizable-discordjs-pagination.png?downloadRank=true&downloads=true&downloadRank=true&stars=true" /></a><a href="https://discord.gg/ju8kxnvnCw"><img src="https://discordapp.com/api/guilds/748607784735604857/widget.png?style=banner2" alt="Discord Banner2"/></a>
+   <a href="https://www.npmjs.com/package/customizable-discordjs-pagination"><img src="https://nodei.co/npm/customizable-discordjs-pagination.png?downloadRank=true&downloads=true&downloadRank=true&stars=true" /></a>  <a href="https://discord.gg/ju8kxnvnCw"><img src="https://discordapp.com/api/guilds/748607784735604857/widget.png?style=banner2" alt="Discord Banner2"/></a>
 </p>
 This package features a fully customizable embed pagination for DiscordJS V13 and V14. The User can modify the buttons to their liking and enable/disable Select Menu.
 To Install: `npm i customizable-discordjs-pagination`
