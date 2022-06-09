@@ -6,7 +6,7 @@ This package features a fully customizable embed pagination for DiscordJS V13 an
 
 ## Install package
 ```sh
-npm install @jeve/lyrics-finder
+npm install customizable-discordjs-pagination
 ```
 
 ## Example
