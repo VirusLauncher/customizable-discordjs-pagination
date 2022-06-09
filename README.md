@@ -43,8 +43,12 @@ Pagination.V14Pagination(Discord, message, pages, buttons, {timeout: 120000, sel
 ![Imgur](https://imgur.com/vKgBYog.jpg)
 
 ## Documentation
-- For V13: Use ```V13Pagination(Discord, message, pages, buttons = [], { timeout = 120000, selectMenu = false, selectMenuPlaceholder = 'Select Page', ephemeral = false, disableEnd = true })```
-- For V14: Use ```V14Pagination(Discord, message, pages, buttons = [], { timeout = 120000, selectMenu = false, selectMenuPlaceholder = 'Select Page', ephemeral = false, disableEnd = true })```
+- For DiscordJS V13: ```sh
+V13Pagination(Discord, message, pages, buttons = [], { timeout = 120000, selectMenu = false, selectMenuPlaceholder = 'Select Page', ephemeral = false, disableEnd = true })
+```
+- For DiscordJS V14: ```sh
+V14Pagination(Discord, message, pages, buttons = [], { timeout = 120000, selectMenu = false, selectMenuPlaceholder = 'Select Page', ephemeral = false, disableEnd = true })
+```
 
 ### Parameters
 | Name | Optional | Default | Details |
