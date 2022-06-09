@@ -8,10 +8,10 @@
  * @param {Boolean} - Select Menu or not
  */
 
-const V14Pagination = async (Discord, message, pages, buttons = [], timeout = 120000, selectmenu = false) => {
+const V14Pagination = async (Discord, message, pages, buttons = [], { timeout = 120000, selectMenu = false, selectMenuPlaceholder = 'Select Page', ephemeral = false, resetTimer = true, disableEnd = true }) => {
     if (!pages) throw new Error('Pages are required.');
-    if (selectmenu && pages.length > 25) throw new Error('Select menu is only available for upto 25 pages.');
-    if (!selectmenu && (buttons.length <= 1 ||  buttons.length >= 6)) throw new Error(`There must be 2, 3, 4 or 5 buttons provided. You provided ${buttons.length}.`);
+    if (selectMenu && pages.length > 25) throw new Error('Select menu is only available for upto 25 pages.');
+    if (!selectMenu && (buttons.length <= 1 ||  buttons.length >= 6)) throw new Error(`There must be 2, 3, 4 or 5 buttons provided. You provided ${buttons.length}.`);
     
     // ButtonList
     const buttonList = [];
@@ -53,7 +53,7 @@ const V14Pagination = async (Discord, message, pages, buttons = [], timeout = 12
     const pageOption = [];
     let pageMenu;
     let pageRow;
-    if (selectmenu) {
+    if (selectMenu) {
         for (let i = 0; i < pages.length; i++) {
             pageOption.push({
                 label: `Page ${i + 1}`,
@@ -64,16 +64,16 @@ const V14Pagination = async (Discord, message, pages, buttons = [], timeout = 12
         pageMenu = new Discord.SelectMenuBuilder()
             .setCustomId('pageMenu')
             .setOptions(pageOption)
-            .setPlaceholder('Select Page');
+            .setPlaceholder(selectMenuPlaceholder);
         
         pageRow = new Discord.ActionRowBuilder().addComponents(pageMenu);
     }
 
     // Options Handler
     let components = [];
-    if (selectmenu && buttons.length === 0) components = [pageRow];
-    else if (selectmenu && buttons.length !== 0) components = [pageRow, buttonRow];
-    else if (!selectmenu && buttons.length !== 0) components = [buttonRow];
+    if (selectMenu && buttons.length === 0) components = [pageRow];
+    else if (selectMenu && buttons.length !== 0) components = [pageRow, buttonRow];
+    else if (!selectMenu && buttons.length !== 0) components = [buttonRow];
 
     // Pagination Handler
     function embed(page) {
@@ -84,7 +84,7 @@ const V14Pagination = async (Discord, message, pages, buttons = [], timeout = 12
     }
 
     let page = 0;
-    await message.reply({ embeds: [embed(page)], components: components }).then(async(msg) => {
+    await message.reply({ embeds: [embed(page)], components: components, ephemeral: ephemeral }).then(async(msg) => {
         const collector = new Discord.InteractionCollector(message.client, {
             message: message.author ? msg : await message.fetchReply(),
             time: timeout,
@@ -93,12 +93,12 @@ const V14Pagination = async (Discord, message, pages, buttons = [], timeout = 12
         async function editEmbed() {
             message.author ?
             await msg.edit({ embeds: [embed(page)], components: components, fetchReply: true }) :
-            await message.editReply({ embeds: [embed(page)], components: components, allowedMentions: { repliedUser: false } });
+            await message.editReply({ embeds: [embed(page)], components: components, allowedMentions: { repliedUser: false }, ephemeral: ephemeral });
         }
 
         collector.on('collect', async(interaction) => {
             if (interaction.member.user.id == message.member.id) {
-                collector.resetTimer(timeout, timeout);
+                if (resetTimer) collector.resetTimer(timeout, timeout);
                 switch(interaction.customId) {
                     case 'firstBtn':
                         page = 0;
@@ -126,30 +126,32 @@ const V14Pagination = async (Discord, message, pages, buttons = [], timeout = 12
         });
         collector.on('end', async() => {
             let disabledComponents = [];
-            if (selectmenu && buttons.length === 0) {
-                pageMenu.setDisabled(true);
-                const disabledPageMenu = new Discord.ActionRowBuilder().addComponents(pageMenu);
-                disabledComponents = [disabledPageMenu];
-            }
-            else if (selectmenu && buttons.length !== 0) {
-                pageMenu.setDisabled(true);
-                for (let i = 0; i < buttons.length; i++) {
-                    buttonList[i].setDisabled(true);
+            if (disableEnd) {
+                if (selectMenu && buttons.length === 0) {
+                    pageMenu.setDisabled(true);
+                    const disabledPageMenu = new Discord.ActionRowBuilder().addComponents(pageMenu);
+                    disabledComponents = [disabledPageMenu];
                 }
-                const disabledPageMenu = new Discord.ActionRowBuilder().addComponents(pageMenu);
-                const disabledButtonRow = new Discord.ActionRowBuilder().addComponents(buttonList);
-                disabledComponents = [disabledPageMenu, disabledButtonRow];
-            }
-            else if (!selectmenu && buttons.length !== 0) {
-                for (let i = 0; i < buttons.length; i++) {
-                    buttonList[i].setDisabled(true);
+                else if (selectMenu && buttons.length !== 0) {
+                    pageMenu.setDisabled(true);
+                    for (let i = 0; i < buttons.length; i++) {
+                        buttonList[i].setDisabled(true);
+                    }
+                    const disabledPageMenu = new Discord.ActionRowBuilder().addComponents(pageMenu);
+                    const disabledButtonRow = new Discord.ActionRowBuilder().addComponents(buttonList);
+                    disabledComponents = [disabledPageMenu, disabledButtonRow];
                 }
-                const disabledButtonRow = new Discord.ActionRowBuilder().addComponents(buttonList);
-                disabledComponents = [disabledButtonRow];
-            };
+                else if (!selectMenu && buttons.length !== 0) {
+                    for (let i = 0; i < buttons.length; i++) {
+                        buttonList[i].setDisabled(true);
+                    }
+                    const disabledButtonRow = new Discord.ActionRowBuilder().addComponents(buttonList);
+                    disabledComponents = [disabledButtonRow];
+                };
+            }
             message.author ?
             await msg.edit({ embeds: [pages[page]], components: disabledComponents }) :
-            await message.editReply({ embeds: [pages[page]], components: disabledComponents });
+            await message.editReply({ embeds: [pages[page]], components: disabledComponents, ephemeral: ephemeral });
         });
     });
 };

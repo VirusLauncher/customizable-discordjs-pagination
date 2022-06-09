@@ -13,24 +13,23 @@ npm install customizable-discordjs-pagination
 ```js
 const Pagination = require('customizable-discordjs-pagination');
 
+// Make Embeds using DiscordJS package
 const pages = [embed1, embed2, embed3, ...];
-const timeout = 120000;
-const slashMenu = true;
 // DiscordJS V13
 const buttons = [
-{ label: 'Previous', emoji: '⬅', style: 'DANGER'},
-{ label: 'Next', emoji: '➡', style: 'SUCCESS'},
+{ label: 'Previous', emoji: '⬅', style: 'DANGER' },
+{ label: 'Next', emoji: '➡', style: 'SUCCESS' },
 ]
 
-Pagination.V13Pagination(Discord, message, pages, buttons, timeout, slashMenu);
+Pagination.V13Pagination(Discord, message, pages, buttons, {timeout: 120000, selectMenu: true, selectMenuPlaceholder: 'Select Page', ephemeral: false, resetTimer: true, disableEnd: true});
 
 // DiscordJS V14
 const buttons = [
-{ label: 'Previous', emoji: '⬅', style: Discord.ButtonStyle.Danger},
-{label: 'Next', emoji: '➡', style: Discord.ButtonStyle.Success},
+{ label: 'Previous', emoji: '⬅', style: Discord.ButtonStyle.Danger },
+{ label: 'Next', emoji: '➡', style: Discord.ButtonStyle.Success },
 ]
 
-Pagination.V13Pagination(Discord, message, pages, buttons, timeout, slashMenu);
+Pagination.V14Pagination(Discord, message, pages, buttons, {timeout: 120000, selectMenu: true, selectMenuPlaceholder: 'Select Page', ephemeral: false, resetTimer: true, disableEnd: true});
 ```
 
 ## Screenshots
@@ -44,18 +43,22 @@ Pagination.V13Pagination(Discord, message, pages, buttons, timeout, slashMenu);
 ![Imgur](https://imgur.com/vKgBYog.jpg)
 
 ## Documentation
-- For V13: Use ```V13Pagination(Discord, message, pages, buttons, timeout, slashMenu)```
-- For V14: Use ```V14Pagination(Discord, message, pages, buttons, timeout, slashMenu)```
+- For V13: Use ```V13Pagination(Discord, message, pages, buttons = [], { timeout = 120000, selectMenu = false, selectMenuPlaceholder = 'Select Page', ephemeral = false, disableEnd = true })```
+- For V14: Use ```V14Pagination(Discord, message, pages, buttons = [], { timeout = 120000, selectMenu = false, selectMenuPlaceholder = 'Select Page', ephemeral = false, disableEnd = true })```
 
 ### Parameters
-| Name | Optional | Details |
-| --- | --- | --- |
-| Discord | ❌ |  Pass the Discord package to be accessible in the function | 
-| Message |  ❌ | Message or Slash Interaction Accepted| 
-| Pages |  ❌ | Array of MessageEmbeds/ButtonBuilder(Pages) |  
-| ButtonList | ✔️ | Array of objects containing styles, labels and/or emojis for the buttons | C
-| Timeout | ✔️ |Timeout in Milliseconds (Default: 120000 ms)| C
-| SelectMenu | ✔️ |Boolean value for SelectMenu  (Page Limit: 25)| 
+| Name | Optional | Default | Details |
+| --- | --- | --- | --- |
+| Discord | ❌ | - | Pass the Discord package to be accessible in the function | 
+| message |  ❌ | - | Message or Slash Interaction Accepted | 
+| pages |  ❌ | - | Array of MessageEmbeds/ButtonBuilder(Pages) |  
+| buttons | ✔️ | [] | Array of objects containing styles, labels and/or emojis for the buttons |
+| timeout | ✔️ | 120000| Timeout in Milliseconds |
+| selectMenu | ✔️ | false | Boolean value for SelectMenu  (Page Limit: 25) | 
+| selectMenuPlaceholder | ✔️ | 'Select Page' | Placeholder for select menu | 
+| ephemeral | ✔️ | false | Whether the reply should be ephemeral (Interaction Only) |
+| resetTimer | ✔️ | true | Reset timer once an interaction is clicked. |
+| disableEnd | ✔️ | true | true: Components disabled. false: Components disappeared  | 
 
 ### ButtonList
 ButtonList should be an Array of objects.
@@ -65,5 +68,8 @@ ButtonList should be an Array of objects.
 | emoji | [String](https://discord.js.org/#/docs/discord.js/13.8.0/typedef/EmojiIdentifierResolvable) | The emoji to be displayed on this button |
 | style | [String](https://discord.js.org/#/docs/discord.js/13.8.0/typedef/MessageButtonStyleResolvable) | The style of this button |
 
+
 ## Bots that use this package
-- [Toating Bot](https://discord.com/api/oauth2/authorize?client_id=710177042490064958&permissions=4063624560&scope=bot%20applications.commands)
+| Avatar | Name |
+| --- | --- |
+| ![](https://cdn.discordapp.com/avatars/710177042490064958/f6177ea17f6da9318d83b5f5d4579bc4.png?size=48) | [Toating Bot](https://discord.com/api/oauth2/authorize?client_id=710177042490064958&permissions=4063624560&scope=bot%20applications.commands) |
