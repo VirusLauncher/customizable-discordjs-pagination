@@ -8,7 +8,7 @@
  * @param {Boolean} - Select Menu or not
  */
 
-const V14Pagination = async (Discord, message, pages, buttons = [], { timeout = 120000, selectMenu = false, selectMenuPlaceholder = 'Select Page', ephemeral = false, resetTimer = true, disableEnd = true, deferred = false }) => {
+const V14Pagination = async (Discord, message, pages, buttons = [], { timeout = 120000, selectMenu = false, selectMenuPlaceholder = 'Select Page', ephemeral = false, resetTimer = true, disableEnd = true }) => {
     if (!pages) throw new Error('Pages are required.');
     if (selectMenu && pages.length > 25) throw new Error('Select menu is only available for upto 25 pages.');
     if (!selectMenu && (buttons.length <= 1 ||  buttons.length >= 6)) throw new Error(`There must be 2, 3, 4 or 5 buttons provided. You provided ${buttons.length}.`);
@@ -119,7 +119,10 @@ const V14Pagination = async (Discord, message, pages, buttons = [], { timeout = 
                         page = Number(interaction.values[0]);
                     break;
                 }
-                if (deferred) await interaction.deferUpdate();
+                await interaction.deferUpdate()
+                    .catch(err => {
+
+                    });
                 await editEmbed();
             }
             else await interaction.reply({ content: 'This isn\'t your button.' , ephemeral: true });
