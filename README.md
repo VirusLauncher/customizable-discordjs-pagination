@@ -79,3 +79,4 @@ ButtonList should be an Array of objects.
 | Avatar | Name |
 | --- | --- |
 | ![](https://cdn.discordapp.com/avatars/710177042490064958/f6177ea17f6da9318d83b5f5d4579bc4.png?size=48) | [Toating Bot](https://discord.com/api/oauth2/authorize?client_id=710177042490064958&permissions=4063624560&scope=bot%20applications.commands) |
+| ![](https://cdn.discordapp.com/emojis/848060200417493053.gif?size=48) | [Savage Bot](https://discord.com/oauth2/authorize?client_id=823703707522433054&permissions=8&scope=bot%20applications.commands) |

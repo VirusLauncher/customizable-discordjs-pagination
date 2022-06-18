@@ -119,7 +119,7 @@ const V14Pagination = async (Discord, message, pages, buttons = [], { timeout = 
                         page = Number(interaction.values[0]);
                     break;
                 }
-                await interaction.deferUpdate();
+                interaction.deffered ? null : await interaction.deferUpdate();
                 await editEmbed();
             }
             else await interaction.reply({ content: 'This isn\'t your button.' , ephemeral: true });
