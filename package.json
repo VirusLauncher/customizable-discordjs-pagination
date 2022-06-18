@@ -1,13 +1,19 @@
 {
   "name": "customizable-discordjs-pagination",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "A Fully Customizable Embed Pagination for DiscordJS",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
-    "discordjs-pagination", "customizable-pagination", "customizable-embed-pagination", "discordjs-13", "discordjs-14", "discordjs-v13", "discordjs-v14"
+    "discordjs-pagination",
+    "customizable-pagination",
+    "customizable-embed-pagination",
+    "discordjs-13",
+    "discordjs-14",
+    "discordjs-v13",
+    "discordjs-v14"
   ],
   "homepage": "https://github.com/VirusLauncher/customizable-discordjs-pagination#readme",
   "bugs": {
