@@ -64,8 +64,7 @@ V14Pagination(Discord, message, pages, buttons = [], { timeout = 120000, selectM
 | selectMenuPlaceholder | ✔️ | 'Select Page' | Placeholder for select menu | 
 | ephemeral | ✔️ | false | Whether the reply should be ephemeral (Interaction Only) |
 | resetTimer | ✔️ | true | Reset timer once an interaction is clicked. |
-| disableEnd | ✔️ | true | true: Components disabled. false: Components disappeared  | 
-| deferred | ✔️ | false | If the user deferred the interactions separately, set to true  | 
+| disableEnd | ✔️ | true | true: Components disabled. false: Components disappeared  |
 
 
 ### ButtonList
