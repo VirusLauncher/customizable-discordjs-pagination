@@ -72,8 +72,8 @@ ButtonList should be an Array of objects.
 | Parameter | Type | Details |
 | --- | --- | --- |
 | label | String | The text to be displayed on this button |
-| emoji | [String](https://discord.js.org/#/docs/discord.js/13.8.0/typedef/EmojiIdentifierResolvable) | The emoji to be displayed on this button |
-| style | [String](https://discord.js.org/#/docs/discord.js/13.8.0/typedef/MessageButtonStyleResolvable) | The style of this button |
+| emoji | [Emoji](https://discord.js.org/#/docs/discord.js/13.8.0/typedef/EmojiIdentifierResolvable) | The emoji to be displayed on this button |
+| style | [ButtonStyle](https://discord.js.org/#/docs/discord.js/13.8.0/typedef/MessageButtonStyle) | The style of this button |
 
 
 ## Bots that use this package
