@@ -3,15 +3,25 @@
  * @param {Discord} - Pass the Discord package to be accessible in the function
  * @param {Message} - Message or Slash Interaction
  * @param {MessageEmbed[]} - Array of MessageEmbeds(Pages)
- * @param {[Object]} - Array of Objects containing Styles, Labels and/or Emojis for the buttons
- * @param {Number} - Timeout in Milliseconds
- * @param {Boolean} - Select Menu or not
+ * @param {Object} - Object with optional parameters (buttons, selectMenu, paginationCollector)
  */
 
-const V14Pagination = async (Discord, message, pages, buttons = [], { timeout = 120000, selectMenu = false, selectMenuPlaceholder = 'Select Page', ephemeral = false, resetTimer = true, disableEnd = true }) => {
+ const V14Pagination = async (Discord, message, pages, { buttons = [], selectMenu, paginationCollector }) => {
+    if (typeof selectMenu !== 'object') selectMenu = {
+        enable: false,
+        placeholder: 'Select Page',
+        pageOnly: false
+    }
+    if (typeof paginationCollector !== 'object') paginationCollector = {
+        timeout: 120000, 
+        ephemeral: false,
+        resetTimer: true,
+        disableEnd: true
+    }
+
     if (!pages) throw new Error('Pages are required.');
-    if (selectMenu && pages.length > 25) throw new Error('Select menu is only available for upto 25 pages.');
-    if (!selectMenu && (buttons.length <= 1 || buttons.length >= 6)) throw new Error(`There must be 2, 3, 4 or 5 buttons provided. You provided ${buttons.length}.`);
+    if (selectMenu?.enable && pages.length > 25) throw new Error('Select menu is only available for upto 25 pages.');
+    if (!selectMenu?.enable && (buttons.length <= 1 || buttons.length >= 6)) throw new Error(`There must be 2, 3, 4 or 5 buttons provided. You provided ${buttons.length}.`);
 
     // ButtonList
     const buttonList = [];
@@ -50,60 +60,76 @@ const V14Pagination = async (Discord, message, pages, buttons = [], { timeout = 
     }
 
     // SelectMenu
-    const pageOption = [];
+    let pageOption = [];
+    let tempTitle = pages[0].data.title;
     let pageMenu;
     let pageRow;
-    if (selectMenu) {
+    if (selectMenu?.enable) {
         for (let i = 0; i < pages.length; i++) {
+            if (!selectMenu?.pageOnly && tempTitle !== pages[i].data.title) {                
+                pageOption = [];
+                break;
+            };
             pageOption.push({
                 label: `Page ${i + 1}`,
                 value: `${i}`,
             });
         }
+        
+        if (pageOption.length === 0) {
+            for (let i = 0; i < pages.length; i++) {
+                pageOption.push({
+                    label: `${pages[i].data.title}`,
+                    value: `${i}`,
+                });
+            }
+        }
 
         pageMenu = new Discord.SelectMenuBuilder()
             .setCustomId('pageMenu')
             .setOptions(pageOption)
-            .setPlaceholder(selectMenuPlaceholder);
+            .setPlaceholder(selectMenu?.placeholder ? selectMenu?.placeholder : 'Select Page');
 
         pageRow = new Discord.ActionRowBuilder().addComponents(pageMenu);
     }
 
     // Options Handler
     let components = [];
-    if (selectMenu && buttons.length === 0) components = [pageRow];
-    else if (selectMenu && buttons.length !== 0) components = [pageRow, buttonRow];
-    else if (!selectMenu && buttons.length !== 0) components = [buttonRow];
+    if (selectMenu?.enable && buttons.length === 0) components = [pageRow];
+    else if (selectMenu?.enable && buttons.length !== 0) components = [pageRow, buttonRow];
+    else if (!selectMenu?.enable && buttons.length !== 0) components = [buttonRow];
 
     // Pagination Handler
     function embed(page) {
-        return pages[page].setFooter({
-            text: `Page ${page + 1} / ${pages.length} • Requested by ${message.member.user.tag}`,
-            iconURL: message.author ? message.author.displayAvatarURL({ dynamic: true }) : message.user.displayAvatarURL({ dynamic: true }),
-        });
+        return (selectMenu?.enable && !selectMenu?.pageOnly && pageOption[0].label !== 'Page 1' ?
+            pages[page] :
+            pages[page].setFooter({
+                text: `Page ${page + 1} / ${pages.length} • Requested by ${message.member.user.tag}`,
+                iconURL: message.author ? message.author.displayAvatarURL({ dynamic: true }) : message.user.displayAvatarURL({ dynamic: true }),
+            })
+        );
     }
 
     let page = 0;
     let msg;
-
     await (message.isReplied || message.deferred ?
-        message.editReply({ embeds: [embed(page)], components: components, ephemeral: ephemeral }).then((m) => { msg = m }) :
-        message.reply({ embeds: [embed(page)], components: components, ephemeral: ephemeral }).then((m) => { msg = m }));
+        message.editReply({ embeds: [embed(page)], components: components, ephemeral: paginationCollector?.ephemeral ? paginationCollector.ephemeral : false }).then((m) => { msg = m }) :
+        message.reply({ embeds: [embed(page)], components: components, ephemeral: paginationCollector?.ephemeral ? paginationCollector.ephemeral : false }).then((m) => { msg = m })).catch();
 
     const collector = new Discord.InteractionCollector(message.client, {
         message: message.author ? msg : await message.fetchReply(),
-        time: timeout,
+        time: paginationCollector?.timeout ? paginationCollector.timeout : 5000,
     });
 
     async function editEmbed() {
         await message.author ?
             msg.edit({ embeds: [embed(page)], components: components, fetchReply: true }) :
-            message.editReply({ embeds: [embed(page)], components: components, allowedMentions: { repliedUser: false }, ephemeral: ephemeral });
+            message.editReply({ embeds: [embed(page)], components: components, allowedMentions: { repliedUser: false }, ephemeral: paginationCollector?.ephemeral ? paginationCollector.ephemeral : false });
     }
 
     collector.on('collect', async (interaction) => {
         if (interaction.member.user.id === message.member.id) {
-            if (resetTimer) collector.resetTimer(timeout, timeout);
+            if (paginationCollector?.resetTimer ? paginationCollector.resetTimer : true) collector.resetTimer(paginationCollector?.timeout ? paginationCollector.timeout : 5000, paginationCollector?.timeout ? paginationCollector.timeout : 5000);
             switch (interaction.customId) {
                 case 'firstBtn':
                     page = 0;
@@ -127,17 +153,19 @@ const V14Pagination = async (Discord, message, pages, buttons = [], { timeout = 
             await interaction.deferUpdate().catch(() => {});
             await editEmbed();
         }
-        else await interaction.reply({ content: 'This isn\'t your button.', ephemeral: true });
+        else await (interaction.isReplied || interaction.deferred ?
+            interaction.editReply({ content: 'This isn\'t your button.', ephemeral: true }) :
+            interaction.reply({ content: 'This isn\'t your button.', ephemeral: true }));
     });
     collector.on('end', async () => {
         let disabledComponents = [];
-        if (disableEnd) {
-            if (selectMenu && buttons.length === 0) {
+        if (paginationCollector?.disableEnd ? paginationCollector.disableEnd : true) {
+            if (selectMenu?.enable && buttons.length === 0) {
                 pageMenu.setDisabled(true);
                 const disabledPageMenu = new Discord.ActionRowBuilder().addComponents(pageMenu);
                 disabledComponents = [disabledPageMenu];
             }
-            else if (selectMenu && buttons.length !== 0) {
+            else if (selectMenu?.enable && buttons.length !== 0) {
                 pageMenu.setDisabled(true);
                 for (let i = 0; i < buttons.length; i++) {
                     buttonList[i].setDisabled(true);
@@ -146,7 +174,7 @@ const V14Pagination = async (Discord, message, pages, buttons = [], { timeout = 
                 const disabledButtonRow = new Discord.ActionRowBuilder().addComponents(buttonList);
                 disabledComponents = [disabledPageMenu, disabledButtonRow];
             }
-            else if (!selectMenu && buttons.length !== 0) {
+            else if (!selectMenu?.enable && buttons.length !== 0) {
                 for (let i = 0; i < buttons.length; i++) {
                     buttonList[i].setDisabled(true);
                 }
@@ -156,7 +184,7 @@ const V14Pagination = async (Discord, message, pages, buttons = [], { timeout = 
         }
         await message.author ?
             msg.edit({ embeds: [pages[page]], components: disabledComponents }) :
-            message.editReply({ embeds: [pages[page]], components: disabledComponents, ephemeral: ephemeral });
+            message.editReply({ embeds: [pages[page]], components: disabledComponents, ephemeral: paginationCollector?.ephemeral ? paginationCollector.ephemeral : false });
     });
 };
 

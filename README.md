@@ -2,7 +2,7 @@
 <p>
    <a href="https://www.npmjs.com/package/customizable-discordjs-pagination"><img src="https://nodei.co/npm/customizable-discordjs-pagination.png?downloadRank=true&downloads=true&downloadRank=true&stars=true" /></a>  <a href="https://discord.gg/ju8kxnvnCw"><img src="https://discordapp.com/api/guilds/748607784735604857/widget.png?style=banner2" alt="Discord Banner2"/></a>
 </p>
-This package features a fully customizable embed pagination for DiscordJS V13 and V14. The User can modify the buttons to their liking and enable/disable Select Menu.
+This package features a fully customizable embed pagination for DiscordJS V13 and V14. The User can modify the buttons to their liking and enable/disable Select Menu. This package requires the Discord package to be passed in as a parameter.
 
 ## Install package
 ```sh
@@ -21,7 +21,7 @@ const buttons = [
 { label: 'Next', emoji: '➡', style: 'SUCCESS' },
 ]
 
-Pagination.V13Pagination(Discord, message, pages, buttons, {timeout: 120000, selectMenu: true, selectMenuPlaceholder: 'Select Page', ephemeral: false, resetTimer: true, disableEnd: true});
+Pagination.V13Pagination(Discord, message, pages, { buttons: buttons, selectMenu: { enable: true }, paginationCollector: { timeout: 120000 } });
 
 // DiscordJS V14
 const buttons = [
@@ -29,7 +29,7 @@ const buttons = [
 { label: 'Next', emoji: '➡', style: Discord.ButtonStyle.Success },
 ]
 
-Pagination.V14Pagination(Discord, message, pages, buttons, {timeout: 120000, selectMenu: true, selectMenuPlaceholder: 'Select Page', ephemeral: false, resetTimer: true, disableEnd: true});
+Pagination.V14Pagination(Discord, message, pages, { buttons: buttons, selectMenu: { enable: true }, paginationCollector: { timeout: 120000 } });
 ```
 
 ## Screenshots
@@ -52,28 +52,43 @@ V13Pagination(Discord, message, pages, buttons = [], { timeout = 120000, selectM
 V14Pagination(Discord, message, pages, buttons = [], { timeout = 120000, selectMenu = false, selectMenuPlaceholder = 'Select Page', ephemeral = false, disableEnd = true })
 ```
 
-### Parameters
-| Name | Optional | Default | Details |
-| --- | --- | --- | --- |
-| Discord | ❌ | - | Pass the Discord package to be accessible in the function | 
-| message |  ❌ | - | Message or Slash Interaction Accepted | 
-| pages |  ❌ | - | Array of MessageEmbeds/ButtonBuilder(Pages) |  
-| buttons | ✔️ | [] | Array of objects containing styles, labels and/or emojis for the buttons |
-| timeout | ✔️ | 120000| Timeout in Milliseconds |
-| selectMenu | ✔️ | false | Boolean value for SelectMenu  (Page Limit: 25) | 
-| selectMenuPlaceholder | ✔️ | 'Select Page' | Placeholder for select menu | 
-| ephemeral | ✔️ | false | Whether the reply should be ephemeral (Interaction Only) |
-| resetTimer | ✔️ | true | Reset timer once an interaction is clicked. |
-| disableEnd | ✔️ | true | true: Components disabled. false: Components disappeared  |
+## Parameters
+| Name | Optional  | Details |
+| --- | --- | ---  |
+| Discord | ❌  | Pass the Discord package to be accessible in the function | 
+| message | ❌ | Message or Slash Interaction Accepted | 
+| pages | ❌ | Array of MessageEmbeds/ButtonBuilder(Pages) |  
+| buttons | ✔️ | Array of objects containing styles, labels and/or emojis for the buttons |
+| selectMenu | ✔️ | Optional Object to set Select Menu Options | 
+| paginationCollector | ✔️ | Optional Object to set Collector Options | 
 
+## Optional Parameters
+### Buttons
+buttons should be an Array of objects.
+Default: An Empty Array( [] )
 
-### ButtonList
-ButtonList should be an Array of objects.
 | Parameter | Type | Details |
 | --- | --- | --- |
 | label | String | The text to be displayed on this button |
 | emoji | [Emoji](https://discord.js.org/#/docs/discord.js/13.8.0/typedef/EmojiIdentifierResolvable) | The emoji to be displayed on this button |
 | style | [ButtonStyle](https://discord.js.org/#/docs/discord.js/13.8.0/typedef/MessageButtonStyle) | The style of this button |
+
+### SelectMenu
+selectMenu should be an Object.
+| Parameter | Type | Default | Details |
+| --- | --- | --- | --- |
+| enable | Boolean | true |Set to true to enable Select Menu |
+| Placeholder | String | 'Select Page' |The text to be displayed as placeholder for the Select Menu |
+| pageOnly | Boolean | false | True: Forced Select Menu Options is page numbers, False: Select Menu Options is the Embed Title(if different) otherwise page numbers |
+
+### PaginationCollector
+paginationCollector should be an Object.
+| Parameter | Type | Default | Details |
+| --- | --- | --- | --- |
+| timeout | Number | 120000 | The time in milliseconds before the Pagination Collector times out |
+| ephemeral | Boolean | false | Set to true to make the Pagination Collector ephemeral |
+| resetTimer | Boolean | true | Set to true to reset the Pagination Collector timer |
+| disableEnd | Boolean | true | Set to true to disable the Pagination Collector's End Button |
 
 
 ## Bots that use this package
