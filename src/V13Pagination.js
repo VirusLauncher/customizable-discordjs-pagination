@@ -85,16 +85,11 @@ const V13Pagination = async (Discord, message, pages, buttons = [], { timeout = 
 
     let page = 0;
     let msg;
-    if (message.isReplied || message.deferred) {
-        await message.editReply({ embeds: [embed(page)], components: components, ephemeral: ephemeral }).then((m) => {
+    await (message.isReplied || message.deferred ? message.editReply({ embeds: [embed(page)], components: components, ephemeral: ephemeral }).then((m) => {
             msg = m;
-        });
-    }
-    else {
-        await message.reply({ embeds: [embed(page)], components: components, ephemeral: ephemeral }).then((m) => {
+        }) : message.reply({ embeds: [embed(page)], components: components, ephemeral: ephemeral }).then((m) => {
             msg = m;
-        });
-    }
+        }));
 
     const collector = new Discord.InteractionCollector(message.client, {
         message: message.author ? msg : await message.fetchReply(),
