@@ -86,8 +86,9 @@ const V14Pagination = async (Discord, message, pages, buttons = [], { timeout = 
     let page = 0;
     let msg;
 
-    (message.isReplied || message.deferred) ? await message.editReply({ embeds: [embed(page)], components: components, ephemeral: ephemeral }).then((m) => { msg = m; }) :
-        await message.reply({ embeds: [embed(page)], components: components, ephemeral: ephemeral }).then((m) => { msg = m; });
+    await (message.isReplied || message.deferred ?
+        message.editReply({ embeds: [embed(page)], components: components, ephemeral: ephemeral }).then((m) => { msg = m }) :
+        message.reply({ embeds: [embed(page)], components: components, ephemeral: ephemeral }).then((m) => { msg = m }));
 
     const collector = new Discord.InteractionCollector(message.client, {
         message: message.author ? msg : await message.fetchReply(),
@@ -95,9 +96,9 @@ const V14Pagination = async (Discord, message, pages, buttons = [], { timeout = 
     });
 
     async function editEmbed() {
-        message.author ?
-            await msg.edit({ embeds: [embed(page)], components: components, fetchReply: true }) :
-            await message.editReply({ embeds: [embed(page)], components: components, allowedMentions: { repliedUser: false }, ephemeral: ephemeral });
+        await message.author ?
+            msg.edit({ embeds: [embed(page)], components: components, fetchReply: true }) :
+            message.editReply({ embeds: [embed(page)], components: components, allowedMentions: { repliedUser: false }, ephemeral: ephemeral });
     }
 
     collector.on('collect', async (interaction) => {
@@ -123,10 +124,7 @@ const V14Pagination = async (Discord, message, pages, buttons = [], { timeout = 
                     page = Number(interaction.values[0]);
                     break;
             }
-            await interaction.deferUpdate()
-                .catch(err => {
-
-                });
+            await interaction.deferUpdate().catch(() => {});
             await editEmbed();
         }
         else await interaction.reply({ content: 'This isn\'t your button.', ephemeral: true });
@@ -156,9 +154,9 @@ const V14Pagination = async (Discord, message, pages, buttons = [], { timeout = 
                 disabledComponents = [disabledButtonRow];
             };
         }
-        message.author ?
-            await msg.edit({ embeds: [pages[page]], components: disabledComponents }) :
-            await message.editReply({ embeds: [pages[page]], components: disabledComponents, ephemeral: ephemeral });
+        await message.author ?
+            msg.edit({ embeds: [pages[page]], components: disabledComponents }) :
+            message.editReply({ embeds: [pages[page]], components: disabledComponents, ephemeral: ephemeral });
     });
 };
 
