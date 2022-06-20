@@ -61,7 +61,7 @@
 
    // SelectMenu
    let pageOption = [];
-   let tempTitle = pages[0].data.title;
+   const tempTitle = pages[0].data.title;
    let pageMenu;
    let pageRow;
    if (selectMenu?.enable) {
