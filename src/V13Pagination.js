@@ -6,14 +6,14 @@
  * @param {Object} - Object with optional parameters (buttons, selectMenu, paginationCollector)
  */
 
- const V13Pagination = async (Discord, message, pages, { buttons = [], selectMenu, paginationCollector }) => {
+const V13Pagination = async (Discord, message, pages, { buttons = [], selectMenu, paginationCollector }) => {
     if (typeof selectMenu !== 'object') selectMenu = {
         enable: false,
         placeholder: 'Select Page',
         pageOnly: false
     }
     if (typeof paginationCollector !== 'object') paginationCollector = {
-        timeout: 120000, 
+        timeout: 120000,
         ephemeral: false,
         resetTimer: true,
         disableEnd: true
@@ -59,31 +59,31 @@
         buttonRow = new Discord.MessageActionRow().addComponents(buttonList);
     }
 
-   // SelectMenu
-   let pageOption = [];
-   const tempTitle = pages[0].data.title;
-   let pageMenu;
-   let pageRow;
-   if (selectMenu?.enable) {
-       for (let i = 0; i < pages.length; i++) {
-           if (!selectMenu?.pageOnly && tempTitle !== pages[i].data.title) {                
-               pageOption = [];
-               break;
-           };
-           pageOption.push({
-               label: `Page ${i + 1}`,
-               value: `${i}`,
-           });
-       }
-       
-       if (pageOption.length === 0) {
-           for (let i = 0; i < pages.length; i++) {
-               pageOption.push({
-                   label: `${pages[i].data.title}`,
-                   value: `${i}`,
-               });
-           }
-       }
+    // SelectMenu
+    let pageOption = [];
+    const tempTitle = pages[0].title;
+    let pageMenu;
+    let pageRow;
+    if (selectMenu?.enable) {
+        for (let i = 0; i < pages.length; i++) {
+            if (!selectMenu?.pageOnly && tempTitle !== pages[i].title) {
+                pageOption = [];
+                break;
+            };
+            pageOption.push({
+                label: `Page ${i + 1}`,
+                value: `${i}`,
+            });
+        }
+
+        if (pageOption.length === 0) {
+            for (let i = 0; i < pages.length; i++) {
+                pageOption.push({
+                    label: `${pages[i].title}`,
+                    value: `${i}`,
+                });
+            }
+        }
 
         pageMenu = new Discord.MessageSelectMenu()
             .setCustomId('pageMenu')
@@ -118,7 +118,7 @@
 
     const collector = new Discord.InteractionCollector(message.client, {
         message: message.author ? msg : await message.fetchReply(),
-        time: paginationCollector?.timeout ? paginationCollector.timeout : 5000,
+        time: paginationCollector?.timeout ? paginationCollector.timeout : 120000,
     });
 
     async function editEmbed() {
@@ -129,7 +129,7 @@
 
     collector.on('collect', async (interaction) => {
         if (interaction.member.user.id === message.member.id) {
-            if (paginationCollector?.resetTimer ? paginationCollector.resetTimer : true) collector.resetTimer(paginationCollector?.timeout ? paginationCollector.timeout : 5000, paginationCollector?.timeout ? paginationCollector.timeout : 5000);
+            if (paginationCollector?.resetTimer ? paginationCollector.resetTimer : true) collector.resetTimer(paginationCollector?.timeout ? paginationCollector.timeout : 120000, paginationCollector?.timeout ? paginationCollector.timeout : 120000);
             switch (interaction.customId) {
                 case 'firstBtn':
                     page = 0;
@@ -150,12 +150,10 @@
                     page = Number(interaction.values[0]);
                     break;
             }
-            await interaction.deferUpdate().catch(() => {});
+            await interaction.deferUpdate().catch(() => { });
             await editEmbed();
         }
-        else await (interaction.isReplied || interaction.deferred ?
-            interaction.editReply({ content: 'This isn\'t your button.', ephemeral: true }) :
-            interaction.reply({ content: 'This isn\'t your button.', ephemeral: true }));
+        else await interaction.reply({ content: 'This isn\'t your interaction.', ephemeral: true });
     });
     collector.on('end', async () => {
         let disabledComponents = [];
