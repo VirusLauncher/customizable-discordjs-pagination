@@ -1,13 +1,13 @@
 /**
  * DiscordJS V13 Pagination
- * @param {Message} - Message or Slash Interaction
- * @param {MessageEmbed[]} - Array of MessageEmbeds(Pages)
- * @param {Object} - Object with optional parameters (buttons, selectMenu, paginationCollector)
+ * @param {Message} MessageOrInteraction  - Message or Interaction
+ * @param {MessageEmbed[]} Pages - Array of MessageEmbeds(Pages)
+ * @param {Object} OptionalParameters - Object with optional parameters (buttons, selectMenu, paginationCollector)
  */
 
-const { MessageButton, MessageActionRow, MessageSelectMenu, InteractionCollector } = require('discord.js');
+const { InteractionCollector, MessageActionRow, MessageButton, MessageSelectMenu } = require('discord.js');
 
-module.exports = async function (message, pages, { buttons = [], selectMenu, paginationCollector }) {
+module.exports = async function (message, pages, { buttons = [], paginationCollector, selectMenu }) {
     if (typeof selectMenu !== 'object') selectMenu = {
         enable: false,
         placeholder: 'Select Page',
@@ -22,7 +22,7 @@ module.exports = async function (message, pages, { buttons = [], selectMenu, pag
 
     if (!pages) throw new Error('Pages are required.');
     if (selectMenu?.enable && pages.length > 25) throw new Error('Select menu is only available for upto 25 pages.');
-    if (!selectMenu?.enable && (buttons.length <= 1 || buttons.length >= 6)) throw new Error(`There must be 2, 3, 4 or 5 buttons provided. You provided ${buttons.length}.`);
+    if (!selectMenu?.enable && (buttons.length <= 1 || buttons.length >= 6)) throw new Error(`There must be 2, 3, 4 or 5 buttons provided. You provided ${buttons.length} buttons.`);
 
     // ButtonList
     const buttonList = [];

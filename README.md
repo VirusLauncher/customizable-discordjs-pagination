@@ -15,13 +15,14 @@ const Pagination = require('customizable-discordjs-pagination');
 
 // Make Embeds using DiscordJS package
 const pages = [embed1, embed2, embed3, ...];
+
 // DiscordJS V13
 const buttons = [
 { label: 'Previous', emoji: '⬅', style: 'DANGER' },
 { label: 'Next', emoji: '➡', style: 'SUCCESS' },
 ]
 
-Pagination(message, pages, { buttons: buttons, selectMenu: { enable: true }, paginationCollector: { timeout: 120000 } });
+Pagination(message, pages, { buttons: buttons, paginationCollector: { timeout: 120000 }, selectMenu: { enable: true } });
 
 // DiscordJS V14
 const buttons = [
@@ -29,7 +30,7 @@ const buttons = [
 { label: 'Next', emoji: '➡', style: Discord.ButtonStyle.Success },
 ]
 
-Pagination(message, pages, { buttons: buttons, selectMenu: { enable: true }, paginationCollector: { timeout: 120000 } });
+Pagination(message, pages, { buttons: buttons, paginationCollector: { timeout: 120000 }, selectMenu: { enable: true } });
 ```
 
 ## Screenshots
@@ -45,14 +46,14 @@ Pagination(message, pages, { buttons: buttons, selectMenu: { enable: true }, pag
 ## Documentation
 - For DiscordJS V13/V14:
 ```js
-Pagination(message, pages, {  buttons = [], selectMenu: { enable: true }, paginationCollector: { timeout: 120000 } });
+Pagination(message, pages, {  buttons = [], paginationCollector: { timeout: 120000 }, selectMenu: { enable: true } });
 ```
 
 ## Parameters
 | Name | Optional  | Details |
 | --- | --- | ---  |
 | message | ❌ | Message or Slash Interaction Accepted | 
-| pages | ❌ | Array of MessageEmbeds/ButtonBuilder(Pages) |  
+| pages | ❌ | Array of MessageEmbeds(DiscordJS V13) or EmbedBuilder(DiscordJS V14) |  
 | buttons | ✔️ | Array of objects containing styles, labels and/or emojis for the buttons |
 | selectMenu | ✔️ | Optional Object to set Select Menu Options | 
 | paginationCollector | ✔️ | Optional Object to set Collector Options | 
@@ -83,7 +84,7 @@ paginationCollector should be an Object.
 | timeout | Number | 120000 | The time in milliseconds before the Pagination Collector times out |
 | ephemeral | Boolean | false | Set to true to make the Pagination Collector ephemeral |
 | resetTimer | Boolean | true | Set to true to reset the Pagination Collector timer |
-| disableEnd | Boolean | true | Set to true to disable the Pagination Collector's End Button |
+| disableEnd | Boolean | true | Set to true to disable the Pagination Interactions, Set to false to disappear the Pagination Interactions |
 
 
 ## Bots that use this package
