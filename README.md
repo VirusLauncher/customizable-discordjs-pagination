@@ -43,13 +43,9 @@ Pagination(message, pages, { buttons: buttons, selectMenu: { enable: true }, pag
 ![Imgur](https://imgur.com/vKgBYog.jpg)
 
 ## Documentation
-- For DiscordJS V13:
+- For DiscordJS V13/V14:
 ```js
-V13Pagination(message, pages, buttons = [], { timeout = 120000, selectMenu = false, selectMenuPlaceholder = 'Select Page', ephemeral = false, disableEnd = true })
-```
-- For DiscordJS V14: 
-```js
-V14Pagination(message, pages, buttons = [], { timeout = 120000, selectMenu = false, selectMenuPlaceholder = 'Select Page', ephemeral = false, disableEnd = true })
+Pagination(message, pages, {  buttons = [], selectMenu: { enable: true }, paginationCollector: { timeout: 120000 } });
 ```
 
 ## Parameters
@@ -77,7 +73,7 @@ selectMenu should be an Object.
 | Parameter | Type | Default | Details |
 | --- | --- | --- | --- |
 | enable | Boolean | true |Set to true to enable Select Menu |
-| Placeholder | String | 'Select Page' |The text to be displayed as placeholder for the Select Menu |
+| placeholder | String | 'Select Page' |The text to be displayed as placeholder for the Select Menu |
 | pageOnly | Boolean | false | True: Forced Select Menu Options is page numbers, False: Select Menu Options is the Embed Title(if different) otherwise page numbers |
 
 ### PaginationCollector
