@@ -2,7 +2,7 @@
 <p>
    <a href="https://www.npmjs.com/package/customizable-discordjs-pagination"><img src="https://nodei.co/npm/customizable-discordjs-pagination.png?downloadRank=true&downloads=true&downloadRank=true&stars=true" /></a>  <a href="https://discord.gg/ju8kxnvnCw"><img src="https://discordapp.com/api/guilds/748607784735604857/widget.png?style=banner2" alt="Discord Banner2"/></a>
 </p>
-This package features a fully customizable embed pagination for DiscordJS V13 and V14. The User can modify the buttons to their liking and enable/disable Select Menu. This package requires the Discord package to be passed in as a parameter.
+This package features a fully customizable embed pagination for DiscordJS V13 and V14. The User can modify the buttons to their liking and enable/disable Select Menu.
 
 ## Install package
 ```sh
@@ -21,7 +21,7 @@ const buttons = [
 { label: 'Next', emoji: '➡', style: 'SUCCESS' },
 ]
 
-Pagination.V13Pagination(Discord, message, pages, { buttons: buttons, selectMenu: { enable: true }, paginationCollector: { timeout: 120000 } });
+Pagination(message, pages, { buttons: buttons, selectMenu: { enable: true }, paginationCollector: { timeout: 120000 } });
 
 // DiscordJS V14
 const buttons = [
@@ -29,7 +29,7 @@ const buttons = [
 { label: 'Next', emoji: '➡', style: Discord.ButtonStyle.Success },
 ]
 
-Pagination.V14Pagination(Discord, message, pages, { buttons: buttons, selectMenu: { enable: true }, paginationCollector: { timeout: 120000 } });
+Pagination(message, pages, { buttons: buttons, selectMenu: { enable: true }, paginationCollector: { timeout: 120000 } });
 ```
 
 ## Screenshots
@@ -43,19 +43,14 @@ Pagination.V14Pagination(Discord, message, pages, { buttons: buttons, selectMenu
 ![Imgur](https://imgur.com/vKgBYog.jpg)
 
 ## Documentation
-- For DiscordJS V13:
+- For DiscordJS V13/V14:
 ```js
-V13Pagination(Discord, message, pages, buttons = [], { timeout = 120000, selectMenu = false, selectMenuPlaceholder = 'Select Page', ephemeral = false, disableEnd = true })
-```
-- For DiscordJS V14: 
-```js
-V14Pagination(Discord, message, pages, buttons = [], { timeout = 120000, selectMenu = false, selectMenuPlaceholder = 'Select Page', ephemeral = false, disableEnd = true })
+Pagination(message, pages, {  buttons = [], selectMenu: { enable: true }, paginationCollector: { timeout: 120000 } });
 ```
 
 ## Parameters
 | Name | Optional  | Details |
 | --- | --- | ---  |
-| Discord | ❌  | Pass the Discord package to be accessible in the function | 
 | message | ❌ | Message or Slash Interaction Accepted | 
 | pages | ❌ | Array of MessageEmbeds/ButtonBuilder(Pages) |  
 | buttons | ✔️ | Array of objects containing styles, labels and/or emojis for the buttons |
@@ -78,7 +73,7 @@ selectMenu should be an Object.
 | Parameter | Type | Default | Details |
 | --- | --- | --- | --- |
 | enable | Boolean | true |Set to true to enable Select Menu |
-| Placeholder | String | 'Select Page' |The text to be displayed as placeholder for the Select Menu |
+| placeholder | String | 'Select Page' |The text to be displayed as placeholder for the Select Menu |
 | pageOnly | Boolean | false | True: Forced Select Menu Options is page numbers, False: Select Menu Options is the Embed Title(if different) otherwise page numbers |
 
 ### PaginationCollector
