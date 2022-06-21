@@ -73,7 +73,7 @@ Default: An Empty Array( [] )
 selectMenu should be an Object.
 | Parameter | Type | Default | Details |
 | --- | --- | --- | --- |
-| enable | Boolean | true |Set to true to enable Select Menu |
+| enable | Boolean | false | Set to true to enable Select Menu |
 | placeholder | String | 'Select Page' |The text to be displayed as placeholder for the Select Menu |
 | pageOnly | Boolean | false | True: Forced Select Menu Options is page numbers, False: Select Menu Options is the Embed Title(if different) otherwise page numbers |
 
