@@ -1,12 +1,13 @@
 /**
  * DiscordJS V14 Pagination
- * @param {Discord} - Pass the Discord package to be accessible in the function
  * @param {Message} - Message or Slash Interaction
  * @param {MessageEmbed[]} - Array of MessageEmbeds(Pages)
  * @param {Object} - Object with optional parameters (buttons, selectMenu, paginationCollector)
  */
 
-const V14Pagination = async (Discord, message, pages, { buttons = [], selectMenu, paginationCollector }) => {
+const { ButtonBuilder, ActionRowBuilder, SelectMenuBuilder, InteractionCollector, ButtonStyle } = require('discord.js');
+
+module.exports = async function (message, pages, { buttons = [], selectMenu, paginationCollector }) {
     if (typeof selectMenu !== 'object') selectMenu = {
         enable: false,
         placeholder: 'Select Page',
@@ -45,9 +46,9 @@ const V14Pagination = async (Discord, message, pages, { buttons = [], selectMenu
     if (buttons.length !== 0) {
         for (let i = 0; i < buttons.length; i++) {
             if (!buttons[i].emoji && !buttons[i].label) throw new Error(`Emoji or Label is required. Check button array position ${i}`);
-            if (buttons[i].style === Discord.ButtonStyle.Link) throw new Error(`Link styles cannot be used in this package.  Check button array position ${i}`);
+            if (buttons[i].style === ButtonStyle.Link) throw new Error(`Link styles cannot be used in this package.  Check button array position ${i}`);
 
-            const perButton = new Discord.ButtonBuilder()
+            const perButton = new ButtonBuilder()
                 .setStyle(buttons[i].style)
                 .setCustomId(buttonId[i]);
 
@@ -56,7 +57,7 @@ const V14Pagination = async (Discord, message, pages, { buttons = [], selectMenu
 
             buttonList.push(perButton);
         }
-        buttonRow = new Discord.ActionRowBuilder().addComponents(buttonList);
+        buttonRow = new ActionRowBuilder().addComponents(buttonList);
     }
 
     // SelectMenu
@@ -85,12 +86,12 @@ const V14Pagination = async (Discord, message, pages, { buttons = [], selectMenu
             }
         }
 
-        pageMenu = new Discord.SelectMenuBuilder()
+        pageMenu = new SelectMenuBuilder()
             .setCustomId('pageMenu')
             .setOptions(pageOption)
             .setPlaceholder(selectMenu?.placeholder ? selectMenu?.placeholder : 'Select Page');
 
-        pageRow = new Discord.ActionRowBuilder().addComponents(pageMenu);
+        pageRow = new ActionRowBuilder().addComponents(pageMenu);
     }
 
     // Options Handler
@@ -116,7 +117,7 @@ const V14Pagination = async (Discord, message, pages, { buttons = [], selectMenu
         message.editReply({ embeds: [embed(page)], components: components, ephemeral: paginationCollector?.ephemeral ? paginationCollector.ephemeral : false }).then((m) => { msg = m }) :
         message.reply({ embeds: [embed(page)], components: components, ephemeral: paginationCollector?.ephemeral ? paginationCollector.ephemeral : false }).then((m) => { msg = m })).catch();
 
-    const collector = new Discord.InteractionCollector(message.client, {
+    const collector = new InteractionCollector(message.client, {
         message: message.author ? msg : await message.fetchReply(),
         time: paginationCollector?.timeout ? paginationCollector.timeout : 120000,
     });
@@ -160,7 +161,7 @@ const V14Pagination = async (Discord, message, pages, { buttons = [], selectMenu
         if (paginationCollector?.disableEnd ? paginationCollector.disableEnd : true) {
             if (selectMenu?.enable && buttons.length === 0) {
                 pageMenu.setDisabled(true);
-                const disabledPageMenu = new Discord.ActionRowBuilder().addComponents(pageMenu);
+                const disabledPageMenu = new ActionRowBuilder().addComponents(pageMenu);
                 disabledComponents = [disabledPageMenu];
             }
             else if (selectMenu?.enable && buttons.length !== 0) {
@@ -168,15 +169,15 @@ const V14Pagination = async (Discord, message, pages, { buttons = [], selectMenu
                 for (let i = 0; i < buttons.length; i++) {
                     buttonList[i].setDisabled(true);
                 }
-                const disabledPageMenu = new Discord.ActionRowBuilder().addComponents(pageMenu);
-                const disabledButtonRow = new Discord.ActionRowBuilder().addComponents(buttonList);
+                const disabledPageMenu = new ActionRowBuilder().addComponents(pageMenu);
+                const disabledButtonRow = new ActionRowBuilder().addComponents(buttonList);
                 disabledComponents = [disabledPageMenu, disabledButtonRow];
             }
             else if (!selectMenu?.enable && buttons.length !== 0) {
                 for (let i = 0; i < buttons.length; i++) {
                     buttonList[i].setDisabled(true);
                 }
-                const disabledButtonRow = new Discord.ActionRowBuilder().addComponents(buttonList);
+                const disabledButtonRow = new ActionRowBuilder().addComponents(buttonList);
                 disabledComponents = [disabledButtonRow];
             };
         }
@@ -185,5 +186,3 @@ const V14Pagination = async (Discord, message, pages, { buttons = [], selectMenu
             message.editReply({ embeds: [pages[page]], components: disabledComponents, ephemeral: paginationCollector?.ephemeral ? paginationCollector.ephemeral : false });
     });
 };
-
-module.exports = V14Pagination;

@@ -1,12 +1,13 @@
 /**
  * DiscordJS V13 Pagination
- * @param {Discord} - Pass the Discord package to be accessible in the function
  * @param {Message} - Message or Slash Interaction
  * @param {MessageEmbed[]} - Array of MessageEmbeds(Pages)
  * @param {Object} - Object with optional parameters (buttons, selectMenu, paginationCollector)
  */
 
-const V13Pagination = async (Discord, message, pages, { buttons = [], selectMenu, paginationCollector }) => {
+const { MessageButton, MessageActionRow, MessageSelectMenu, InteractionCollector } = require('discord.js');
+
+module.exports = async function (message, pages, { buttons = [], selectMenu, paginationCollector }) {
     if (typeof selectMenu !== 'object') selectMenu = {
         enable: false,
         placeholder: 'Select Page',
@@ -47,7 +48,7 @@ const V13Pagination = async (Discord, message, pages, { buttons = [], selectMenu
             if (!buttons[i].emoji && !buttons[i].label) throw new Error(`Emoji or Label is required. Check button array position ${i}`);
             if (buttons[i].style === 'LINK') throw new Error(`Link styles cannot be used in this package.  Check button array position ${i}`);
 
-            const perButton = new Discord.MessageButton()
+            const perButton = new MessageButton()
                 .setStyle(buttons[i].style)
                 .setCustomId(buttonId[i]);
 
@@ -56,7 +57,7 @@ const V13Pagination = async (Discord, message, pages, { buttons = [], selectMenu
 
             buttonList.push(perButton);
         }
-        buttonRow = new Discord.MessageActionRow().addComponents(buttonList);
+        buttonRow = new MessageActionRow().addComponents(buttonList);
     }
 
     // SelectMenu
@@ -85,12 +86,12 @@ const V13Pagination = async (Discord, message, pages, { buttons = [], selectMenu
             }
         }
 
-        pageMenu = new Discord.MessageSelectMenu()
+        pageMenu = new MessageSelectMenu()
             .setCustomId('pageMenu')
             .setOptions(pageOption)
             .setPlaceholder(selectMenu?.placeholder ? selectMenu?.placeholder : 'Select Page');
 
-        pageRow = new Discord.MessageActionRow().addComponents(pageMenu);
+        pageRow = new MessageActionRow().addComponents(pageMenu);
     }
 
     // Options Handler
@@ -116,7 +117,7 @@ const V13Pagination = async (Discord, message, pages, { buttons = [], selectMenu
         message.editReply({ embeds: [embed(page)], components: components, ephemeral: paginationCollector?.ephemeral ? paginationCollector.ephemeral : false }).then((m) => { msg = m }) :
         message.reply({ embeds: [embed(page)], components: components, ephemeral: paginationCollector?.ephemeral ? paginationCollector.ephemeral : false }).then((m) => { msg = m })).catch();
 
-    const collector = new Discord.InteractionCollector(message.client, {
+    const collector = new InteractionCollector(message.client, {
         message: message.author ? msg : await message.fetchReply(),
         time: paginationCollector?.timeout ? paginationCollector.timeout : 120000,
     });
@@ -160,7 +161,7 @@ const V13Pagination = async (Discord, message, pages, { buttons = [], selectMenu
         if (paginationCollector?.disableEnd ? paginationCollector.disableEnd : true) {
             if (selectMenu?.enable && buttons.length === 0) {
                 pageMenu.setDisabled(true);
-                const disabledPageMenu = new Discord.MessageActionRow().addComponents(pageMenu);
+                const disabledPageMenu = new MessageActionRow().addComponents(pageMenu);
                 disabledComponents = [disabledPageMenu];
             }
             else if (selectMenu?.enable && buttons.length !== 0) {
@@ -168,15 +169,15 @@ const V13Pagination = async (Discord, message, pages, { buttons = [], selectMenu
                 for (let i = 0; i < buttons.length; i++) {
                     buttonList[i].setDisabled(true);
                 }
-                const disabledPageMenu = new Discord.MessageActionRow().addComponents(pageMenu);
-                const disabledButtonRow = new Discord.MessageActionRow().addComponents(buttonList);
+                const disabledPageMenu = new MessageActionRow().addComponents(pageMenu);
+                const disabledButtonRow = new MessageActionRow().addComponents(buttonList);
                 disabledComponents = [disabledPageMenu, disabledButtonRow];
             }
             else if (!selectMenu?.enable && buttons.length !== 0) {
                 for (let i = 0; i < buttons.length; i++) {
                     buttonList[i].setDisabled(true);
                 }
-                const disabledButtonRow = new Discord.MessageActionRow().addComponents(buttonList);
+                const disabledButtonRow = new MessageActionRow().addComponents(buttonList);
                 disabledComponents = [disabledButtonRow];
             };
         }
@@ -185,5 +186,3 @@ const V13Pagination = async (Discord, message, pages, { buttons = [], selectMenu
             message.editReply({ embeds: [pages[page]], components: disabledComponents, ephemeral: paginationCollector?.ephemeral ? paginationCollector.ephemeral : false });
     });
 };
-
-module.exports = V13Pagination;
