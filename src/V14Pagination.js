@@ -10,14 +10,15 @@ const { ActionRowBuilder, ButtonBuilder, ButtonStyle, InteractionCollector, Sele
 module.exports = async function (message, pages, { buttons = [], paginationCollector, selectMenu }) {
     if (typeof selectMenu !== 'object') selectMenu = {
         enable: false,
+        pageOnly: false,
         placeholder: 'Select Page',
-        pageOnly: false
     }
     if (typeof paginationCollector !== 'object') paginationCollector = {
-        timeout: 120000,
+        disableEnd: true, 
         ephemeral: false,
         resetTimer: true,
-        disableEnd: true
+        secondaryUserText: 'This isn\'t your interaction.',
+        timeout: 120000,
     }
 
     if (!pages) throw new Error('Pages are required.');
@@ -102,13 +103,10 @@ module.exports = async function (message, pages, { buttons = [], paginationColle
 
     // Pagination Handler
     function embed(page) {
-        return (selectMenu?.enable && !selectMenu?.pageOnly && pageOption[0].label !== 'Page 1' ?
-            pages[page] :
-            pages[page].setFooter({
-                text: `Page ${page + 1} / ${pages.length} • Requested by ${message.member.user.tag}`,
-                iconURL: message.author ? message.author.displayAvatarURL({ dynamic: true }) : message.user.displayAvatarURL({ dynamic: true }),
-            })
-        );
+        return pages[page].setFooter({
+            text: `Page ${page + 1} / ${pages.length} • Requested by ${message.member.user.tag}`,
+            iconURL: message.author ? message.author.displayAvatarURL({ dynamic: true }) : message.user.displayAvatarURL({ dynamic: true }),
+        });
     }
 
     let page = 0;
@@ -154,7 +152,7 @@ module.exports = async function (message, pages, { buttons = [], paginationColle
             await interaction.deferUpdate().catch(() => { });
             await editEmbed();
         }
-        else await interaction.reply({ content: 'This isn\'t your button.', ephemeral: true });
+        else await interaction.reply({ content: paginationCollector?.secondaryUserText ? paginationCollector.secondaryUserText : 'This isn\'t your interaction.', ephemeral: true });
     });
     collector.on('end', async () => {
         let disabledComponents = [];

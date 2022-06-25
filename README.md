@@ -74,18 +74,18 @@ selectMenu should be an Object.
 | Parameter | Type | Default | Details |
 | --- | --- | --- | --- |
 | enable | Boolean | false | Set to true to enable Select Menu |
-| placeholder | String | 'Select Page' |The text to be displayed as placeholder for the Select Menu |
 | pageOnly | Boolean | false | True: Forced Select Menu Options is page numbers, False: Select Menu Options is the Embed Title(if different) otherwise page numbers |
+| placeholder | String | 'Select Page' |The text to be displayed as placeholder for the Select Menu |
 
 ### PaginationCollector
 paginationCollector should be an Object.
 | Parameter | Type | Default | Details |
 | --- | --- | --- | --- |
-| timeout | Number | 120000 | The time in milliseconds before the Pagination Collector times out |
+| disableEnd | Boolean | true | Set to true to disable the Pagination Interactions, Set to false to disappear the Pagination Interactions |
 | ephemeral | Boolean | false | Set to true to make the Pagination Collector ephemeral |
 | resetTimer | Boolean | true | Set to true to reset the Pagination Collector timer |
-| disableEnd | Boolean | true | Set to true to disable the Pagination Interactions, Set to false to disappear the Pagination Interactions |
-
+| secondaryUserText | String | 'This isn\'t your interaction.' | Shown when a secondary User(Not Author) use the interactions. |
+| timeout | Number | 120000 | The time in milliseconds before the Pagination Collector times out |
 
 ## Bots that use this package
 | Avatar | Name |
