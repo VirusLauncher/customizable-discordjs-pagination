@@ -1,28 +1,21 @@
 /**
- * DiscordJS V14 Pagination
- * @param {Message} MessageOrInteraction  - Message or Interaction
- * @param {MessageEmbed[]} Pages - Array of MessageEmbeds(Pages)
- * @param {Object} OptionalParameters - Object with optional parameters (buttons, selectMenu, paginationCollector)
- */
+ * @param message - Message or Interaction
+ * @param {[]} pages - Array of Embeds(Pages)
+ * @param {[{label:String,emoji:EmojiResolvable,style:ButtonStyle}]}buttons - Array of Buttons Objects
+ * @param {{enable:Boolean,pageOnly:Boolean,placeholder:String}} selectMenu - SelectMenu Options
+ * @param {{ephemeral:Boolean,timeout:Number,resetTimer:Boolean,disableEnd:Boolean,secondaryUserText:String}} options - Pagination Options
+ **/
 
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle, InteractionCollector, SelectMenuBuilder } = require('discord.js');
+const Parameters = require('./Parameters');
 
-module.exports = async function (message, pages, { buttons = [], paginationCollector, selectMenu }) {
-    if (typeof selectMenu !== 'object') selectMenu = {
-        enable: false,
-        placeholder: 'Select Page',
-        pageOnly: false
-    }
-    if (typeof paginationCollector !== 'object') paginationCollector = {
-        timeout: 120000,
-        ephemeral: false,
-        resetTimer: true,
-        disableEnd: true
-    }
-
+module.exports = async function (message, pages, { buttons , paginationCollector, selectMenu }) {
     if (!pages) throw new Error('Pages are required.');
-    if (selectMenu?.enable && pages.length > 25) throw new Error('Select menu is only available for upto 25 pages.');
-    if (!selectMenu?.enable && (buttons.length <= 1 || buttons.length >= 6)) throw new Error(`There must be 2, 3, 4 or 5 buttons provided. You provided ${buttons.length} buttons.`);
+
+    const params = new Parameters({ paginationCollector, selectMenu });
+
+    if (params.selectMenu.enable && pages.length > 25) throw new Error('Select menu is only available for upto 25 pages.');
+    if (!params.selectMenu.enable && (buttons.length <= 1 || buttons.length >= 6)) throw new Error(`There must be 2, 3, 4 or 5 buttons provided. You provided ${buttons.length} buttons.`);
 
     // ButtonList
     const buttonList = [];
@@ -65,9 +58,9 @@ module.exports = async function (message, pages, { buttons = [], paginationColle
     const tempTitle = pages[0].data.title;
     let pageMenu;
     let pageRow;
-    if (selectMenu?.enable) {
+    if (params.selectMenu.enable) {
         for (let i = 0; i < pages.length; i++) {
-            if (!selectMenu?.pageOnly && tempTitle !== pages[i].data.title) {
+            if (!params.selectMenu.pageOnly && tempTitle !== pages[i].data.title) {
                 pageOption = [];
                 break;
             };
@@ -89,20 +82,20 @@ module.exports = async function (message, pages, { buttons = [], paginationColle
         pageMenu = new SelectMenuBuilder()
             .setCustomId('pageMenu')
             .setOptions(pageOption)
-            .setPlaceholder(selectMenu?.placeholder ? selectMenu?.placeholder : 'Select Page');
+            .setPlaceholder(params.selectMenu.placeholder);
 
         pageRow = new ActionRowBuilder().addComponents(pageMenu);
     }
 
     // Options Handler
     let components = [];
-    if (selectMenu?.enable && buttons.length === 0) components = [pageRow];
-    else if (selectMenu?.enable && buttons.length !== 0) components = [pageRow, buttonRow];
-    else if (!selectMenu?.enable && buttons.length !== 0) components = [buttonRow];
+    if (params.selectMenu.enable && buttons.length === 0) components = [pageRow];
+    else if (params.selectMenu.enable && buttons.length !== 0) components = [pageRow, buttonRow];
+    else if (!params.selectMenu.enable && buttons.length !== 0) components = [buttonRow];
 
     // Pagination Handler
     function embed(page) {
-        return (selectMenu?.enable && !selectMenu?.pageOnly && pageOption[0].label !== 'Page 1' ?
+        return (params.selectMenu.enable && !params.selectMenu.pageOnly && pageOption[0].label !== 'Page 1' ?
             pages[page] :
             pages[page].setFooter({
                 text: `Page ${page + 1} / ${pages.length} • Requested by ${message.member.user.tag}`,
@@ -114,12 +107,12 @@ module.exports = async function (message, pages, { buttons = [], paginationColle
     let page = 0;
     let msg;
     await (message.isReplied || message.deferred ?
-        message.editReply({ embeds: [embed(page)], components: components, ephemeral: paginationCollector?.ephemeral ? paginationCollector.ephemeral : false }).then((m) => { msg = m }) :
-        message.reply({ embeds: [embed(page)], components: components, ephemeral: paginationCollector?.ephemeral ? paginationCollector.ephemeral : false }).then((m) => { msg = m })).catch();
+        message.editReply({ embeds: [embed(page)], components: components, ephemeral: params.paginationCollector.ephemeral }).then((m) => { msg = m }) :
+        message.reply({ embeds: [embed(page)], components: components, ephemeral: params.paginationCollector.ephemeral }).then((m) => { msg = m })).catch();
 
     const collector = new InteractionCollector(message.client, {
         message: message.author ? msg : await message.fetchReply(),
-        time: paginationCollector?.timeout ? paginationCollector.timeout : 120000,
+        time: params.paginationCollector.timeout,
     });
 
     async function editEmbed() {
@@ -130,7 +123,7 @@ module.exports = async function (message, pages, { buttons = [], paginationColle
 
     collector.on('collect', async (interaction) => {
         if (interaction.member.user.id === message.member.id) {
-            if (paginationCollector?.resetTimer ? paginationCollector.resetTimer : true) collector.resetTimer(paginationCollector?.timeout ? paginationCollector.timeout : 120000, paginationCollector?.timeout ? paginationCollector.timeout : 120000);
+            if (params.paginationCollector.resetTimer) collector.resetTimer(params.paginationCollector.timeout, params.paginationCollector.timeout);
             switch (interaction.customId) {
                 case 'firstBtn':
                     page = 0;
@@ -154,17 +147,17 @@ module.exports = async function (message, pages, { buttons = [], paginationColle
             await interaction.deferUpdate().catch(() => { });
             await editEmbed();
         }
-        else await interaction.reply({ content: 'This isn\'t your button.', ephemeral: true });
+        else await interaction.reply({ content: params.paginationCollector.secondaryUserText, ephemeral: true });
     });
     collector.on('end', async () => {
         let disabledComponents = [];
-        if (paginationCollector?.disableEnd ? paginationCollector.disableEnd : true) {
-            if (selectMenu?.enable && buttons.length === 0) {
+        if (params.paginationCollector.disableEnd) {
+            if (params.selectMenu.enable && buttons.length === 0) {
                 pageMenu.setDisabled(true);
                 const disabledPageMenu = new ActionRowBuilder().addComponents(pageMenu);
                 disabledComponents = [disabledPageMenu];
             }
-            else if (selectMenu?.enable && buttons.length !== 0) {
+            else if (params.selectMenu.enable && buttons.length !== 0) {
                 pageMenu.setDisabled(true);
                 for (let i = 0; i < buttons.length; i++) {
                     buttonList[i].setDisabled(true);
@@ -173,7 +166,7 @@ module.exports = async function (message, pages, { buttons = [], paginationColle
                 const disabledButtonRow = new ActionRowBuilder().addComponents(buttonList);
                 disabledComponents = [disabledPageMenu, disabledButtonRow];
             }
-            else if (!selectMenu?.enable && buttons.length !== 0) {
+            else if (!params.selectMenu.enable && buttons.length !== 0) {
                 for (let i = 0; i < buttons.length; i++) {
                     buttonList[i].setDisabled(true);
                 }
@@ -183,6 +176,6 @@ module.exports = async function (message, pages, { buttons = [], paginationColle
         }
         await message.author ?
             msg.edit({ embeds: [pages[page]], components: disabledComponents }) :
-            message.editReply({ embeds: [pages[page]], components: disabledComponents, ephemeral: paginationCollector?.ephemeral ? paginationCollector.ephemeral : false });
+            message.editReply({ embeds: [pages[page]], components: disabledComponents, ephemeral: params.paginationCollector.ephemeral });
     });
 };
