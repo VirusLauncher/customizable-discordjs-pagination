@@ -11,7 +11,7 @@ npm install customizable-discordjs-pagination
 
 ## Example
 ```js
-const Pagination = require('customizable-discordjs-pagination');
+const PaginationBuilder = require('customizable-discordjs-pagination');
 
 // Make Embeds using DiscordJS package
 const pages = [embed1, embed2, embed3, ...];
@@ -22,15 +22,25 @@ const buttons = [
 { label: 'Next', emoji: '➡', style: 'SUCCESS' },
 ]
 
-Pagination(message, pages, { buttons: buttons, paginationCollector: { timeout: 120000 }, selectMenu: { enable: true } });
-
+new PaginationBuilder(message)
+   .setPages(pages)
+   .setButtons(buttons)
+   .setPaginationCollector({ timeout: 120000})
+   .setSelectMenu({ enable: true })
+   .execute();
+   
 // DiscordJS V14
 const buttons = [
 { label: 'Previous', emoji: '⬅', style: Discord.ButtonStyle.Danger },
 { label: 'Next', emoji: '➡', style: Discord.ButtonStyle.Success },
 ]
 
-Pagination(message, pages, { buttons: buttons, paginationCollector: { timeout: 120000 }, selectMenu: { enable: true } });
+new PaginationBuilder(message)
+   .setPages(pages)
+   .setButtons(buttons)
+   .setPaginationCollector({ timeout: 120000})
+   .setSelectMenu({ enable: true })
+   .execute();
 ```
 
 ## Screenshots
@@ -46,7 +56,12 @@ Pagination(message, pages, { buttons: buttons, paginationCollector: { timeout: 1
 ## Documentation
 - For DiscordJS V13/V14:
 ```js
-Pagination(message, pages, {  buttons = [], paginationCollector: { timeout: 120000 }, selectMenu: { enable: true } });
+new PaginationBuilder(message)
+   .setPages(pages)
+   .setButtons(buttons)
+   .setPaginationCollector({ timeout: 120000 })
+   .setSelectMenu({ enable: true })
+   .execute();
 ```
 
 ## Parameters

@@ -1,6 +1,6 @@
 {
   "name": "customizable-discordjs-pagination",
-  "version": "1.3.2-dev",
+  "version": "1.4.0-dev",
   "description": "A Fully Customizable Embed Pagination for DiscordJS",
   "main": "index.js",
   "scripts": {

@@ -7,16 +7,8 @@
  **/
 
 const { InteractionCollector, MessageActionRow, MessageButton, MessageSelectMenu } = require('discord.js');
-const Parameters = require('./Parameters');
 
-module.exports = async function (message, pages, { buttons, paginationCollector, selectMenu }) {
-    if (!pages) throw new Error('Pages are required.');
-
-    const params = new Parameters({ paginationCollector, selectMenu });
-
-    if (params.selectMenu.enable && pages.length > 25) throw new Error('Select menu is only available for upto 25 pages.');
-    if (!params.selectMenu.enable && (buttons.length <= 1 || buttons.length >= 6)) throw new Error(`There must be 2, 3, 4 or 5 buttons provided. You provided ${buttons.length} buttons.`);
-
+module.exports = async function (message, pages, buttons, paginationCollector, selectMenu) {
     // ButtonList
     const buttonList = [];
     let buttonId = [];
@@ -58,9 +50,9 @@ module.exports = async function (message, pages, { buttons, paginationCollector,
     const tempTitle = pages[0].title;
     let pageMenu;
     let pageRow;
-    if (params.selectMenu.enable) {
+    if (selectMenu.enable) {
         for (let i = 0; i < pages.length; i++) {
-            if (!params.selectMenu.pageOnly && tempTitle !== pages[i].title) {
+            if (!selectMenu.pageOnly && tempTitle !== pages[i].title) {
                 pageOption = [];
                 break;
             };
@@ -82,20 +74,20 @@ module.exports = async function (message, pages, { buttons, paginationCollector,
         pageMenu = new MessageSelectMenu()
             .setCustomId('pageMenu')
             .setOptions(pageOption)
-            .setPlaceholder(params.selectMenu.placeholder);
+            .setPlaceholder(selectMenu.placeholder);
 
         pageRow = new MessageActionRow().addComponents(pageMenu);
     }
 
     // Options Handler
     let components = [];
-    if (params.selectMenu.enable && buttons.length === 0) components = [pageRow];
-    else if (params.selectMenu.enable && buttons.length !== 0) components = [pageRow, buttonRow];
-    else if (!params.selectMenu.enable && buttons.length !== 0) components = [buttonRow];
+    if (selectMenu.enable && buttons.length === 0) components = [pageRow];
+    else if (selectMenu.enable && buttons.length !== 0) components = [pageRow, buttonRow];
+    else if (!selectMenu.enable && buttons.length !== 0) components = [buttonRow];
 
     // Pagination Handler
     function embed(page) {
-        return (params.selectMenu.enable && !params.selectMenu.pageOnly && pageOption[0].label !== 'Page 1' ?
+        return (selectMenu.enable && !selectMenu.pageOnly && pageOption[0].label !== 'Page 1' ?
             pages[page] :
             pages[page].setFooter({
                 text: `Page ${page + 1} / ${pages.length} • Requested by ${message.member.user.tag}`,
@@ -107,12 +99,12 @@ module.exports = async function (message, pages, { buttons, paginationCollector,
     let page = 0;
     let msg;
     await (message.isReplied || message.deferred ?
-        message.editReply({ embeds: [embed(page)], components: components, ephemeral: params.paginationCollector.ephemeral }).then((m) => { msg = m }) :
-        message.reply({ embeds: [embed(page)], components: components, ephemeral: params.paginationCollector.ephemeral }).then((m) => { msg = m })).catch();
+        message.editReply({ embeds: [embed(page)], components: components, ephemeral: paginationCollector.ephemeral }).then((m) => { msg = m }) :
+        message.reply({ embeds: [embed(page)], components: components, ephemeral: paginationCollector.ephemeral }).then((m) => { msg = m })).catch();
 
     const collector = new InteractionCollector(message.client, {
         message: message.author ? msg : await message.fetchReply(),
-        time: params.paginationCollector.timeout,
+        time: paginationCollector.timeout,
     });
 
     async function editEmbed() {
@@ -123,7 +115,7 @@ module.exports = async function (message, pages, { buttons, paginationCollector,
 
     collector.on('collect', async (interaction) => {
         if (interaction.member.user.id === message.member.id) {
-            if (params.paginationCollector.resetTimer) collector.resetTimer(params.paginationCollector.timeout, params.paginationCollector.timeout);
+            if (paginationCollector.resetTimer) collector.resetTimer(paginationCollector.timeout, paginationCollector.timeout);
             switch (interaction.customId) {
                 case 'firstBtn':
                     page = 0;
@@ -147,17 +139,17 @@ module.exports = async function (message, pages, { buttons, paginationCollector,
             await interaction.deferUpdate().catch(() => { });
             await editEmbed();
         }
-        else await interaction.reply({ content: params.paginationCollector.secondaryUserText, ephemeral: true });
+        else await interaction.reply({ content: paginationCollector.secondaryUserText, ephemeral: true });
     });
     collector.on('end', async () => {
         let disabledComponents = [];
-        if (params.paginationCollector.disableEnd) {
-            if (params.selectMenu.enable && buttons.length === 0) {
+        if (paginationCollector.disableEnd) {
+            if (selectMenu.enable && buttons.length === 0) {
                 pageMenu.setDisabled(true);
                 const disabledPageMenu = new MessageActionRow().addComponents(pageMenu);
                 disabledComponents = [disabledPageMenu];
             }
-            else if (params.selectMenu.enable && buttons.length !== 0) {
+            else if (selectMenu.enable && buttons.length !== 0) {
                 pageMenu.setDisabled(true);
                 for (let i = 0; i < buttons.length; i++) {
                     buttonList[i].setDisabled(true);
@@ -166,7 +158,7 @@ module.exports = async function (message, pages, { buttons, paginationCollector,
                 const disabledButtonRow = new MessageActionRow().addComponents(buttonList);
                 disabledComponents = [disabledPageMenu, disabledButtonRow];
             }
-            else if (!params.selectMenu.enable && buttons.length !== 0) {
+            else if (!selectMenu.enable && buttons.length !== 0) {
                 for (let i = 0; i < buttons.length; i++) {
                     buttonList[i].setDisabled(true);
                 }
@@ -176,6 +168,6 @@ module.exports = async function (message, pages, { buttons, paginationCollector,
         }
         await message.author ?
             msg.edit({ embeds: [pages[page]], components: disabledComponents }) :
-            message.editReply({ embeds: [pages[page]], components: disabledComponents, ephemeral: params.paginationCollector.ephemeral });
+            message.editReply({ embeds: [pages[page]], components: disabledComponents, ephemeral: paginationCollector.ephemeral });
     });
 };
