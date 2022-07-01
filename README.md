@@ -22,12 +22,13 @@ const buttons = [
 { label: 'Next', emoji: '➡', style: 'SUCCESS' },
 ]
 
-new PaginationBuilder(message)
+new PaginationBuilder()
+   .setCommand(message)
    .setPages(pages)
    .setButtons(buttons)
    .setPaginationCollector({ timeout: 120000})
    .setSelectMenu({ enable: true })
-   .execute();
+   .send();
    
 // DiscordJS V14
 const buttons = [
@@ -35,7 +36,8 @@ const buttons = [
 { label: 'Next', emoji: '➡', style: Discord.ButtonStyle.Success },
 ]
 
-new PaginationBuilder(message)
+new PaginationBuilder()
+   .setCommand(message)
    .setPages(pages)
    .setButtons(buttons)
    .setPaginationCollector({ timeout: 120000})
@@ -56,18 +58,19 @@ new PaginationBuilder(message)
 ## Documentation
 - For DiscordJS V13/V14:
 ```js
-new PaginationBuilder(message)
+new PaginationBuilder()
+   .setCommand(message)
    .setPages(pages)
    .setButtons(buttons)
    .setPaginationCollector({ timeout: 120000 })
    .setSelectMenu({ enable: true })
-   .execute();
+   .send();
 ```
 
 ## Parameters
 | Name | Optional  | Details |
 | --- | --- | ---  |
-| message | ❌ | Message or Slash Interaction Accepted | 
+| command | ❌ | Message or Slash Interaction Accepted | 
 | pages | ❌ | Array of MessageEmbeds(DiscordJS V13) or EmbedBuilder(DiscordJS V14) |  
 | buttons | ✔️ | Array of objects containing styles, labels and/or emojis for the buttons |
 | selectMenu | ✔️ | Optional Object to set Select Menu Options | 

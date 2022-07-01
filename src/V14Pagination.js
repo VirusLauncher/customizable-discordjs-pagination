@@ -8,7 +8,7 @@
 
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle, InteractionCollector, SelectMenuBuilder } = require('discord.js');
 
-module.exports = async function (message, pages, buttons , paginationCollector, selectMenu) {
+module.exports = async function (message, pages, buttons, paginationCollector, selectMenu) {
     // ButtonList
     const buttonList = [];
     let buttonId = [];
@@ -110,7 +110,7 @@ module.exports = async function (message, pages, buttons , paginationCollector, 
     async function editEmbed() {
         await message.author ?
             msg.edit({ embeds: [embed(page)], components: components, fetchReply: true }) :
-            message.editReply({ embeds: [embed(page)], components: components, allowedMentions: { repliedUser: false }, ephemeral: paginationCollector?.ephemeral ? paginationCollector.ephemeral : false });
+            message.editReply({ embeds: [embed(page)], components: components, allowedMentions: { repliedUser: false }, ephemeral: paginationCollector.ephemeral });
     }
 
     collector.on('collect', async (interaction) => {

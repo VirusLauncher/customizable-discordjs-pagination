@@ -1,10 +1,10 @@
- /**
- * @param message - Message or Interaction
- * @param {[]} pages - Array of Embeds(Pages)
- * @param {[{label:String,emoji:EmojiResolvable,style:ButtonStyle}]}buttons - Array of Buttons Objects
- * @param {{enable:Boolean,pageOnly:Boolean,placeholder:String}} selectMenu - SelectMenu Options
- * @param {{ephemeral:Boolean,timeout:Number,resetTimer:Boolean,disableEnd:Boolean,secondaryUserText:String}} options - Pagination Options
- **/
+/**
+* @param message - Message or Interaction
+* @param {[]} pages - Array of Embeds(Pages)
+* @param {[{label:String,emoji:EmojiResolvable,style:ButtonStyle}]}buttons - Array of Buttons Objects
+* @param {{enable:Boolean,pageOnly:Boolean,placeholder:String}} selectMenu - SelectMenu Options
+* @param {{ephemeral:Boolean,timeout:Number,resetTimer:Boolean,disableEnd:Boolean,secondaryUserText:String}} options - Pagination Options
+**/
 
 const { InteractionCollector, MessageActionRow, MessageButton, MessageSelectMenu } = require('discord.js');
 
@@ -110,7 +110,7 @@ module.exports = async function (message, pages, buttons, paginationCollector, s
     async function editEmbed() {
         await message.author ?
             msg.edit({ embeds: [embed(page)], components: components, fetchReply: true }) :
-            message.editReply({ embeds: [embed(page)], components: components, allowedMentions: { repliedUser: false }, ephemeral: paginationCollector?.ephemeral ? paginationCollector.ephemeral : false });
+            message.editReply({ embeds: [embed(page)], components: components, allowedMentions: { repliedUser: false }, ephemeral: paginationCollector.ephemeral });
     }
 
     collector.on('collect', async (interaction) => {
