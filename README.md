@@ -11,7 +11,7 @@ npm install customizable-discordjs-pagination
 
 ## Discord.js v13 Example
 ```js
-const PaginationBuilder = require('customizable-discordjs-pagination');
+const Pagination = require('customizable-discordjs-pagination');
 
 // Make Embeds using DiscordJS package
 const pages = [embed1, embed2, embed3];
@@ -21,18 +21,18 @@ const buttons = [
    { label: 'Next', emoji: '➡', style: 'SUCCESS' }
 ];
 
-new PaginationBuilder()
+new Pagination()
    .setCommand(message)
    .setPages(pages)
    .setButtons(buttons)
-   .setPaginationCollector({ timeout: 120000})
+   .setPaginationCollector({ timeout: 120000 })
    .setSelectMenu({ enable: true })
    .send();
 ```
 ## Discord.js v14 Example
 ```js   
-const PaginationBuilder = require('customizable-discordjs-pagination');
-const {ButtonStyle} = require('discord.js'); // Discord.js v14+
+const Pagination = require('customizable-discordjs-pagination');
+const { ButtonStyle } = require('discord.js'); // Discord.js v14+
 
 // Make Embeds using DiscordJS package
 const pages = [embed1, embed2, embed3];
@@ -42,11 +42,11 @@ const buttons = [
 { label: 'Next', emoji: '➡', style: ButtonStyle.Success },
 ]
 
-new PaginationBuilder()
+new Pagination()
    .setCommand(message)
    .setPages(pages)
    .setButtons(buttons)
-   .setPaginationCollector({ timeout: 120000})
+   .setPaginationCollector({ timeout: 120000 })
    .setSelectMenu({ enable: true })
    .send();
 ```
@@ -64,7 +64,7 @@ new PaginationBuilder()
 ## Documentation
 - For DiscordJS V13/V14:
 ```js
-new PaginationBuilder()
+new Pagination()
    .setCommand(message)
    .setPages(pages)
    .setButtons(buttons)
@@ -84,8 +84,8 @@ new PaginationBuilder()
 
 ## Optional Parameters
 ### Buttons
-buttons should be an Array of objects.
-Default: An Empty Array( [] )
+buttons should be an array of objects.
+Default: An Empty Array ( [] )
 
 | Parameter | Type | Details |
 | --- | --- | --- |
@@ -94,7 +94,7 @@ Default: An Empty Array( [] )
 | style | [ButtonStyle](https://discord.js.org/#/docs/discord.js/13.8.0/typedef/MessageButtonStyle) | The style of this button |
 
 ### SelectMenu
-selectMenu should be an Object.
+selectMenu should be an object.
 | Parameter | Type | Default | Details |
 | --- | --- | --- | --- |
 | enable | Boolean | false | Set to true to enable Select Menu |
@@ -102,14 +102,15 @@ selectMenu should be an Object.
 | pageOnly | Boolean | false | True: Forced Select Menu Options is page numbers, False: Select Menu Options is the Embed Title(if different) otherwise page numbers |
 
 ### PaginationCollector
-paginationCollector should be an Object.
+paginationCollector should be an object.
 | Parameter | Type | Default | Details |
 | --- | --- | --- | --- |
-| timeout | Number | 120000 | The time in milliseconds before the Pagination Collector times out |
+| disableEnd | Boolean | true | Set to true to disable the Pagination Interactions, Set to false to disappear the Pagination Interactions |
 | ephemeral | Boolean | false | Set to true to make the Pagination Collector ephemeral |
 | resetTimer | Boolean | true | Set to true to reset the Pagination Collector timer |
-| disableEnd | Boolean | true | Set to true to disable the Pagination Interactions, Set to false to disappear the Pagination Interactions |
-
+| secondaryUserInteraction | Boolean | false | Set to true to allow secondary user interaction |
+| secondaryUserText | String | 'Select Page' | The text to be displayed for the secondary user |
+| timeout | Number | 120000 | The time in milliseconds before the Pagination Collector times out |
 
 ## Bots that use this package
 | Avatar | Name |

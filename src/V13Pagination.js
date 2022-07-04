@@ -1,9 +1,9 @@
 /**
-* @param message - Message or Interaction
-* @param {[]} pages - Array of Embeds(Pages)
-* @param {[{label:String,emoji:EmojiResolvable,style:ButtonStyle}]}buttons - Array of Buttons Objects
-* @param {{enable:Boolean,pageOnly:Boolean,placeholder:String}} selectMenu - SelectMenu Options
-* @param {{ephemeral:Boolean,timeout:Number,resetTimer:Boolean,disableEnd:Boolean,secondaryUserText:String}} options - Pagination Options
+ * @param message - Message or Interaction
+ * @param {[]} pages - Array of Embeds(Pages)
+ * @param {[{label:String,emoji:EmojiResolvable,style:ButtonStyle}]} buttons - Array of Buttons Objects
+ * @param {{enable:Boolean,pageOnly:Boolean,placeholder:String}} selectMenu - SelectMenu Options
+ * @param {{disableEnd:Boolean,ephemeral:Boolean,resetTimer:Boolean,secondaryUserInteraction:Boolean,secondaryUserText:String,timeout:Number}} options - Pagination Options
 **/
 
 const { InteractionCollector, MessageActionRow, MessageButton, MessageSelectMenu } = require('discord.js');
@@ -114,7 +114,7 @@ module.exports = async function (message, pages, buttons, paginationCollector, s
     }
 
     collector.on('collect', async (interaction) => {
-        if (interaction.member.user.id === message.member.id) {
+        if (interaction.member.user.id === message.member.id || paginationCollector.secondaryUserInteraction) {
             if (paginationCollector.resetTimer) collector.resetTimer(paginationCollector.timeout, paginationCollector.timeout);
             switch (interaction.customId) {
                 case 'firstBtn':
@@ -139,7 +139,9 @@ module.exports = async function (message, pages, buttons, paginationCollector, s
             await interaction.deferUpdate().catch(() => { });
             await editEmbed();
         }
-        else await interaction.reply({ content: paginationCollector.secondaryUserText, ephemeral: true });
+        else {
+            if (!paginationCollector.secondaryUserInteraction) await interaction.reply({ content: paginationCollector.secondaryUserText, ephemeral: true });
+        }
     });
     collector.on('end', async () => {
         let disabledComponents = [];
