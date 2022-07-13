@@ -3,12 +3,13 @@
  * @param {[]} pages - Array of Embeds(Pages)
  * @param {[{label:String,emoji:EmojiResolvable,style:ButtonStyle}]} buttons - Array of Buttons Objects
  * @param {{enable:Boolean,pageOnly:Boolean,placeholder:String}} selectMenu - SelectMenu Options
- * @param {{disableEnd:Boolean,ephemeral:Boolean,resetTimer:Boolean,secondaryUserInteraction:Boolean,secondaryUserText:String,timeout:Number}} options - Pagination Options
+ * @param {{disableEnd:Boolean,ephemeral:Boolean,resetTimer:Boolean,secondaryUserInteraction:Boolean,secondaryUserText:String,timeout:Number}} paginationCollector - Pagination Options
+ * @param {{enable:Boolean,pagePosition:String,extraText:String,iconURL:String}} footer - Footer Options
 **/
 
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle, InteractionCollector, SelectMenuBuilder } = require('discord.js');
 
-module.exports = async function (message, pages, buttons, paginationCollector, selectMenu) {
+module.exports = async function (message, pages, buttons, paginationCollector, selectMenu, footer) {
     // ButtonList
     const buttonList = [];
     let buttonId = [];
@@ -87,13 +88,25 @@ module.exports = async function (message, pages, buttons, paginationCollector, s
 
     // Pagination Handler
     function embed(page) {
-        return (selectMenu.enable && !selectMenu.pageOnly && pageOption[0].label !== 'Page 1' ?
-            pages[page] :
-            pages[page].setFooter({
-                text: `Page ${page + 1} / ${pages.length} • Requested by ${message.member.user.tag}`,
-                iconURL: message.author ? message.author.displayAvatarURL({ dynamic: true }) : message.user.displayAvatarURL({ dynamic: true }),
-            })
-        );
+        if (!footer.enable) return pages[page];
+        let text = '';
+        switch ((footer.pagePosition).toLowerCase()) {
+            case 'left':
+                footer.extraText ? text = `Page ${page + 1} / ${pages.length} • ${footer.extraText}` : text = `Page ${page + 1} / ${pages.length}`;
+                break;
+            case 'right':
+                footer.extraText ? text = `${footer.extraText} • Page ${page + 1} / ${pages.length}` : text = `Page ${page + 1} / ${pages.length}`;
+                break;
+            case 'none':
+                footer.extraText ? text = `${footer.extraText}` : text = '';
+                break;
+            default:
+                throw new Error('Invalid page footer position. Valid positions are left, right, none');
+        }
+        return pages[page].setFooter({
+            text: text,
+            iconURL: footer.iconURL,
+        });
     }
 
     let page = 0;

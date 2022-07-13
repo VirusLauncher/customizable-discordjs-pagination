@@ -27,6 +27,7 @@ new Pagination()
    .setButtons(buttons)
    .setPaginationCollector({ timeout: 120000 })
    .setSelectMenu({ enable: true })
+   .setFooter({ enable: true })
    .send();
 ```
 ## Discord.js v14 Example
@@ -48,6 +49,7 @@ new Pagination()
    .setButtons(buttons)
    .setPaginationCollector({ timeout: 120000 })
    .setSelectMenu({ enable: true })
+   .setFooter({ enable: true })
    .send();
 ```
 
@@ -70,6 +72,7 @@ new Pagination()
    .setButtons(buttons)
    .setPaginationCollector({ timeout: 120000 })
    .setSelectMenu({ enable: true })
+   .setFooter({ enable: true })
    .send();
 ```
 
@@ -81,6 +84,7 @@ new Pagination()
 | buttons | ✔️ | Array of objects containing styles, labels and/or emojis for the buttons |
 | selectMenu | ✔️ | Optional Object to set Select Menu Options | 
 | paginationCollector | ✔️ | Optional Object to set Collector Options | 
+| footer | ✔️ | Optional Object to set Footer Options |
 
 ## Optional Parameters
 ### Buttons
@@ -98,7 +102,7 @@ selectMenu should be an object.
 | Parameter | Type | Default | Details |
 | --- | --- | --- | --- |
 | enable | Boolean | false | Set to true to enable Select Menu |
-| placeholder | String | 'Select Page' |The text to be displayed as placeholder for the Select Menu |
+| placeholder | String | 'Select Page' | The text to be displayed as placeholder for the Select Menu |
 | pageOnly | Boolean | false | True: Forced Select Menu Options is page numbers, False: Select Menu Options is the Embed Title(if different) otherwise page numbers |
 
 ### PaginationCollector
@@ -111,6 +115,19 @@ paginationCollector should be an object.
 | secondaryUserInteraction | Boolean | false | Set to true to allow secondary user interaction |
 | secondaryUserText | String | 'Select Page' | The text to be displayed for the secondary user |
 | timeout | Number | 120000 | The time in milliseconds before the Pagination Collector times out |
+
+### Footer
+Footer should be an object.
+
+| Parameter | Type | Default | Details |
+| --- | --- | --- | --- |
+| enable | Boolean | true | Set to false to disable Footer |
+| pagePosition | String | 'left' | Adjust the pagePosition to the left, right or none. |
+| extraText | String | 'Requested by {User Tag}' | The user can customize this text to be displayed on the footer |
+| iconURL | String | {User Avatar} | The icon URL of the footer |
+
+{User Tag} - message.member.user.tag | interaction.member.user.tag
+{User Avatar} - message.author.displayAvatarURL({ dynamic: true }) | interaction.user.displayAvatarURL({ dynamic: true })
 
 ## Bots that use this package
 | Avatar | Name |
