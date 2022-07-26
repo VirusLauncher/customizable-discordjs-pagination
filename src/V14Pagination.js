@@ -156,7 +156,7 @@ module.exports = async function (message, pages, { buttons = [], paginationColle
     });
     collector.on('end', async () => {
         let disabledComponents = [];
-        if (paginationCollector ? paginationCollector.disableEnd : true) {
+        if (paginationCollector.disableEnd ?? true) {
             if (selectMenu?.enable && buttons.length === 0) {
                 pageMenu.setDisabled(true);
                 const disabledPageMenu = new ActionRowBuilder().addComponents(pageMenu);
