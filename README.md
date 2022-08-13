@@ -109,7 +109,7 @@ selectMenu should be an object.
 paginationCollector should be an object.
 | Parameter | Type | Default | Details |
 | --- | --- | --- | --- |
-| disableEnd | Boolean | true | Set to true to disable the Pagination Interactions, Set to false to disappear the Pagination Interactions |
+| components | String | 'disable' | Options: 'disable' - Disables the components at the end ; 'disappear' - Remove the components at the end |
 | ephemeral | Boolean | false | Set to true to make the Pagination Collector ephemeral |
 | resetTimer | Boolean | true | Set to true to reset the Pagination Collector timer |
 | secondaryUserInteraction | Boolean | false | Set to true to allow secondary user interaction |

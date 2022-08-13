@@ -1,14 +1,14 @@
 const { version } = require('discord.js');
 const V13Pagination = require('./src/V13Pagination');
 const V14Pagination = require('./src/V14Pagination');
-
+const paginationHandler = require('./src/paginationHandler');
 module.exports = class Pagination {
     constructor() {
         this.command = null;
         this.pages = null;
         this.buttons = [];
         this.paginationCollector = {
-            disableEnd: true,
+            components: 'disable',
             ephemeral: false,
             resetTimer: true,
             secondaryUserInteraction: false,
@@ -91,9 +91,10 @@ module.exports = class Pagination {
         * setPaginationCollector({ ephemeral: true, timeout: 120000, resetTimer: true, disableEnd: true, secondaryUserText: 'This isn\'t your interaction.'});
      */
 
-    setPaginationCollector({ disableEnd, ephemeral, resetTimer, secondaryUserInteraction, secondaryUserText, timeout }) {
+    setPaginationCollector({ components, ephemeral, resetTimer, secondaryUserInteraction, secondaryUserText, timeout }) {
+        if (components?.toLowerCase() !== 'disable' || components?.toLowerCase() !== 'disappear') this.paginationCollector.components = 'disable';
         this.paginationCollector = {
-            disableEnd: disableEnd || true,
+            components: components?.toLowerCase() || 'disable',
             ephemeral: ephemeral || false,
             resetTimer: resetTimer || true,
             secondaryUserInteraction: secondaryUserInteraction || false,
@@ -118,13 +119,14 @@ module.exports = class Pagination {
         return this;
     };
 
-    send() {
+    async send() {
         if (!this.command) throw new Error('Message or Interaction is required.');
         if (!this.pages) throw new Error('Pages are required.');
         if (this.selectMenu.enable && this.pages.length > 25) throw new Error('Select menu is only available for upto 25 pages.');
         if (!this.selectMenu.enable && (this.buttons.length <= 1 || this.buttons.length >= 6)) throw new Error(`There must be 2, 3, 4 or 5 buttons provided. You provided ${this.buttons.length} buttons.`);
-        if (version < '14.0.0') return V13Pagination(this.command, this.pages, this.buttons, this.paginationCollector, this.selectMenu, this.footer);
-        else if (version >= '14.0.0') return V14Pagination(this.command, this.pages, this.buttons, this.paginationCollector, this.selectMenu, this.footer);
-        else if (version < '13.0.0') throw new Error('Discord.js version is not supported.');
+        return await paginationHandler(this);
+        // if (version < '14.0.0') return V13Pagination(this.command, this.pages, this.buttons, this.paginationCollector, this.selectMenu, this.footer);
+        // else if (version >= '14.0.0') return V14Pagination(this.command, this.pages, this.buttons, this.paginationCollector, this.selectMenu, this.footer);
+        // else if (version < '13.0.0') throw new Error('Discord.js version is not supported.');
     };
 };
