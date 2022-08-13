@@ -11,6 +11,6 @@ module.exports = {
         }
         await message.author ?
         msg.edit({ components: components }) :
-        message.editReply({ components: components, ephemeral: paginationCollector.ephemeral });
+        message.editReply({ components: components });
 	},
 };
