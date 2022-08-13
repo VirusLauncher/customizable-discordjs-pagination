@@ -1,6 +1,4 @@
 const { version } = require('discord.js');
-const V13Pagination = require('./src/V13Pagination');
-const V14Pagination = require('./src/V14Pagination');
 const paginationHandler = require('./src/paginationHandler');
 module.exports = class Pagination {
     constructor() {
@@ -125,8 +123,6 @@ module.exports = class Pagination {
         if (this.selectMenu.enable && this.pages.length > 25) throw new Error('Select menu is only available for upto 25 pages.');
         if (!this.selectMenu.enable && (this.buttons.length <= 1 || this.buttons.length >= 6)) throw new Error(`There must be 2, 3, 4 or 5 buttons provided. You provided ${this.buttons.length} buttons.`);
         return await paginationHandler(this);
-        // if (version < '14.0.0') return V13Pagination(this.command, this.pages, this.buttons, this.paginationCollector, this.selectMenu, this.footer);
-        // else if (version >= '14.0.0') return V14Pagination(this.command, this.pages, this.buttons, this.paginationCollector, this.selectMenu, this.footer);
         // else if (version < '13.0.0') throw new Error('Discord.js version is not supported.');
     };
 };
