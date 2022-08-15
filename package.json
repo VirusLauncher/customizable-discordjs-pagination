@@ -1,0 +1,28 @@
+{
+  "name": "customizable-discordjs-pagination",
+  "version": "2.0.0",
+  "description": "A Fully Customizable Embed Pagination for DiscordJS",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "discordjs-pagination",
+    "customizable-pagination",
+    "customizable-embed-pagination",
+    "discordjs-13",
+    "discordjs-14",
+    "discordjs-v13",
+    "discordjs-v14"
+  ],
+  "homepage": "https://github.com/VirusLauncher/customizable-discordjs-pagination#readme",
+  "bugs": {
+    "url": "https://github.com/VirusLauncher/customizable-discordjs-pagination/issues"
+  },
+  "author": "Kris Dookharan (VirusLauncher)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VirusLauncher/customizable-discordjs-pagination.git"
+  },
+  "license": "MIT"
+}
