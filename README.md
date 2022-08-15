@@ -79,8 +79,8 @@ new Pagination()
 ## Methods
 | Name | Optional  | Details |
 | --- | --- | ---  |
-| setCommand(message || interaction) | ❌ | Message or Slash Interaction Accepted | 
-| setPages([MessageEmbed || EmbedBuilder]) | ❌ | Array of MessageEmbeds(DiscordJS V13) or EmbedBuilder(DiscordJS V14) |
+| setCommand(message / interaction) | ❌ | Message or Slash Interaction Accepted | 
+| setPages(pages) | ❌ | Array of MessageEmbeds(DiscordJS V13) or EmbedBuilder(DiscordJS V14) |
 | send() | ❌ | Executes the pagination | 
 | setButtons([{ parameters }, { parameters }, ...]) | ✔️ | Array of objects containing styles, labels and/or emojis for the buttons |
 | setPaginationCollector({ parameters }) | ✔️ | Optional Method to set Select Menu Options | 
