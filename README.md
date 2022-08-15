@@ -104,7 +104,7 @@ Defaults:
 
 | Parameter | Type | Default | Details |
 | --- | --- | --- | --- |
-| option | Sting | 'default' | 'user' - Uses the User's Embed Footer; 'none' - Remove Embed Footer; 'default': The Package Default Footer with parameters modifications(Below) |
+| option | String | 'default' | 'user' - Uses the User's Embed Footer; 'none' - Remove Embed Footer; 'default': The Package Default Footer with parameters modifications(Below) |
 | pagePosition | String | 'left' | Adjust the pagePosition to the left, right or none. |
 | extraText | String | 'Requested by {User Tag}' | The user can customize this text to be displayed on the footer |
 | enableIconURL | Boolean | true | Set tp false to disable Footer Icon(Image) |
@@ -126,7 +126,7 @@ Defaults:
 | ephemeral | Boolean | false | Set to true to make the Pagination Collector ephemeral |
 | resetTimer | Boolean | true | Set to true to reset the Pagination Collector timer |
 | secondaryUserInteraction | Boolean | false | Set to true to allow secondary user interaction |
-| secondaryUserText | String | 'Select Page' | The text to be displayed for the secondary user |
+| secondaryUserText | String | 'This isn\'t your interaction.' | The text to be displayed for the secondary user |
 | timeout | Number | 120000 | The time in milliseconds before the Pagination Collector times out |
 
 ## Bots that use this package
