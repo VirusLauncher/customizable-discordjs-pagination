@@ -39,8 +39,8 @@ const { ButtonStyle } = require('discord.js'); // Discord.js v14+
 const pages = [embed1, embed2, embed3];
 
 const buttons = [
-{ label: 'Previous', emoji: '⬅', style: ButtonStyle.Danger },
-{ label: 'Next', emoji: '➡', style: ButtonStyle.Success },
+   { label: 'Previous', emoji: '⬅', style: ButtonStyle.Danger },
+   { label: 'Next', emoji: '➡', style: ButtonStyle.Success },
 ]
 
 new Pagination()
