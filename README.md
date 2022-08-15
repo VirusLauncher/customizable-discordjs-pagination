@@ -76,19 +76,19 @@ new Pagination()
    .send();
 ```
 
-## Parameters
+## Methods
 | Name | Optional  | Details |
 | --- | --- | ---  |
-| command | ❌ | Message or Slash Interaction Accepted | 
-| pages | ❌ | Array of MessageEmbeds(DiscordJS V13) or EmbedBuilder(DiscordJS V14) |  
-| buttons | ✔️ | Array of objects containing styles, labels and/or emojis for the buttons |
-| selectMenu | ✔️ | Optional Object to set Select Menu Options | 
-| paginationCollector | ✔️ | Optional Object to set Collector Options | 
-| footer | ✔️ | Optional Object to set Footer Options |
+| setCommand(message || interaction) | ❌ | Message or Slash Interaction Accepted | 
+| setPages([MessageEmbed || EmbedBuilder]) | ❌ | Array of MessageEmbeds(DiscordJS V13) or EmbedBuilder(DiscordJS V14) |
+| send() | ❌ | Executes the pagination | 
+| setButtons([{ parameters }, { parameters }, ...]) | ✔️ | Array of objects containing styles, labels and/or emojis for the buttons |
+| setPaginationCollector({ parameters }) | ✔️ | Optional Method to set Select Menu Options | 
+| setSelectMenu({ parameters }) | ✔️ | Optional Method to set Collector Options | 
+| setFooter({ parameters }) | ✔️ | Optional Method to set Footer Options |
 
-## Optional Parameters
-### Buttons
-buttons should be an array of objects.
+## Optional Methods
+### setButtons([{ parameters }, { parameters }, ...])
 Default: An Empty Array ( [] )
 
 | Parameter | Type | Details |
@@ -97,16 +97,29 @@ Default: An Empty Array ( [] )
 | emoji | [Emoji](https://discord.js.org/#/docs/discord.js/13.8.0/typedef/EmojiIdentifierResolvable) | The emoji to be displayed on this button |
 | style | [ButtonStyle](https://discord.js.org/#/docs/discord.js/13.8.0/typedef/MessageButtonStyle) | The style of this button |
 
-### SelectMenu
-selectMenu should be an object.
+### setFooter({ parameters })
+Defaults:
+- {User Tag} - message.member.user.tag || interaction.member.user.tag
+- {User Avatar} - message.author.displayAvatarURL({ dynamic: true }) || interaction.user.displayAvatarURL({ dynamic: true })
+
+| Parameter | Type | Default | Details |
+| --- | --- | --- | --- |
+| option | Sting | 'default' | 'user' - Uses the User's Embed Footer; 'none' - Remove Embed Footer; 'default': The Package Default Footer with parameters modifications(Below) |
+| pagePosition | String | 'left' | Adjust the pagePosition to the left, right or none. |
+| extraText | String | 'Requested by {User Tag}' | The user can customize this text to be displayed on the footer |
+| enableIconURL | Boolean | true | Set tp false to disable Footer Icon(Image) |
+| iconURL | String | {User Avatar} | The icon URL of the footer |
+
+### setSelectMenu({ parameters })
+
 | Parameter | Type | Default | Details |
 | --- | --- | --- | --- |
 | enable | Boolean | false | Set to true to enable Select Menu |
 | placeholder | String | 'Select Page' | The text to be displayed as placeholder for the Select Menu |
-| pageOnly | Boolean | false | True: Forced Select Menu Options is page numbers, False: Select Menu Options is the Embed Title(if different) otherwise page numbers |
+| pageOnly | Boolean | false | True: Forced Select Menu Options is page numbers; False: Select Menu Options is the Embed Title(if different), otherwise page numbers |
 
-### PaginationCollector
-paginationCollector should be an object.
+### setPaginationCollector({ parameters })
+
 | Parameter | Type | Default | Details |
 | --- | --- | --- | --- |
 | components | String | 'disable' | Options: 'disable' - Disables the components at the end ; 'disappear' - Remove the components at the end |
@@ -115,19 +128,6 @@ paginationCollector should be an object.
 | secondaryUserInteraction | Boolean | false | Set to true to allow secondary user interaction |
 | secondaryUserText | String | 'Select Page' | The text to be displayed for the secondary user |
 | timeout | Number | 120000 | The time in milliseconds before the Pagination Collector times out |
-
-### Footer
-Footer should be an object.
-
-| Parameter | Type | Default | Details |
-| --- | --- | --- | --- |
-| enable | Boolean | true | Set to false to disable Footer |
-| pagePosition | String | 'left' | Adjust the pagePosition to the left, right or none. |
-| extraText | String | 'Requested by {User Tag}' | The user can customize this text to be displayed on the footer |
-| iconURL | String | {User Avatar} | The icon URL of the footer |
-
-{User Tag} - message.member.user.tag | interaction.member.user.tag
-{User Avatar} - message.author.displayAvatarURL({ dynamic: true }) | interaction.user.displayAvatarURL({ dynamic: true })
 
 ## Bots that use this package
 | Avatar | Name |

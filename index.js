@@ -1,5 +1,6 @@
 const { version } = require('discord.js');
 const paginationHandler = require('./src/paginationHandler');
+
 module.exports = class Pagination {
     constructor() {
         this.command = null;
@@ -19,11 +20,11 @@ module.exports = class Pagination {
             placeholder: 'Select Page',
         };
         this.footer = {
-            enable: null,
-            pagePosition: null,
+            option: 'default',
+            pagePosition: 'left',
             extraText: null,
             iconURL: null,
-        }
+        };
     }
 
     /**
@@ -36,8 +37,6 @@ module.exports = class Pagination {
         if (!command) throw new Error('Message or Interaction is required.');
         this.command = command;
         this.footer = {
-            enable: true,
-            pagePosition: 'left',
             extraText: `Requested by ${this.command.member.user.tag}`,
             iconURL: this.command.author ? this.command.author.displayAvatarURL({ dynamic: true }) : this.command.user.displayAvatarURL({ dynamic: true }),
         };
@@ -58,8 +57,8 @@ module.exports = class Pagination {
 
     /**
      * @param {[{label:String,emoji:EmojiResolvable,style:ButtonStyle}]} buttons - Array of Buttons Objects
-     * @example v13 - [{label: '1', emoji: '1️⃣', style: 'SUCCESS'},
-     * @example v14 - [{label: '1', emoji: '1️⃣', style: ButtonStyle.SUCCESS},
+     * @example v13 - [{ label: '1', emoji: '1️⃣', style: 'SUCCESS' }, { label: '2', emoji: '2️⃣', style: 'SUCCESS' }]
+     * @example v14 - [{ label: '1', emoji: '1️⃣', style: ButtonStyle.Success }, { label: '2', emoji: '2️⃣', style: ButtonStyle.Success }]
      */
 
     setButtons(buttons) {
@@ -68,25 +67,26 @@ module.exports = class Pagination {
     };
 
     /**
-     * @param {{enable:Boolean,pagePosition:String,extraText:String,iconURL:String}} footer - Footer Options
-     * @example
-     * setSelectMenu({enable:true,pageOnly:true,placeholder:'Select Page'});
+     * @param {{option:String,pagePosition:String,extraText:String,enableIconUrl:Boolean,iconURL:String}} footer - Footer Options
+     * @example setFooter({ option:'default', pagePosition:'left', extraText:'String', enableIconUrl:true, iconURL:'https://somelink.png' });
      **/
 
-     setFooter({ enable, pagePosition, extraText, iconURL }) {
+     setFooter({ option, pagePosition, extraText, enableIconUrl, iconURL }) {
+        if (option?.toLowerCase() !== 'default' || option?.toLowerCase() !== 'none' || option?.toLowerCase() !== 'user') this.footer.option = 'default';
         this.footer = {
-            enable: enable || true,
-            pagePosition: pagePosition || 'left',
+            option: option?.toLowerCase() || 'default',
+            pagePosition: pagePosition?.toLowerCase() || 'left',
             extraText: extraText || `Requested by ${this.command.member.user.tag}`,
             iconURL: iconURL || this.command.author ? this.command.author.displayAvatarURL({ dynamic: true }) : this.command.user.displayAvatarURL({ dynamic: true }),
-       };
+        };
+        if (enableIconUrl === false) this.footer.iconURL = null;
         return this;
     };
 
     /**
         * @param {{disableEnd:Boolean,ephemeral:Boolean,resetTimer:Boolean,secondaryUserInteraction:Boolean,secondaryUserText:String,timeout:Number}} PaginationCollector - Pagination Options
         * @example
-        * setPaginationCollector({ ephemeral: true, timeout: 120000, resetTimer: true, disableEnd: true, secondaryUserText: 'This isn\'t your interaction.'});
+        * setPaginationCollector({ ephemeral: true, timeout: 120000, resetTimer: true, disableEnd: true, secondaryUserText: 'This isn\'t your interaction.' });
      */
 
     setPaginationCollector({ components, ephemeral, resetTimer, secondaryUserInteraction, secondaryUserText, timeout }) {
@@ -105,7 +105,7 @@ module.exports = class Pagination {
     /**
      * @param {{enable:Boolean,pageOnly:Boolean,placeholder:String}} selectMenu - SelectMenu Options
      * @example
-     * setSelectMenu({enable:true,pageOnly:true,placeholder:'Select Page'});
+     * setSelectMenu({ enable:true, pageOnly:true, placeholder:'Select Page' });
      **/
 
     setSelectMenu({ enable, pageOnly, placeholder }) {
@@ -118,11 +118,11 @@ module.exports = class Pagination {
     };
 
     async send() {
+        if (version < '13.0.0') throw new Error('Discord.js version 12 and below is not supported.');
         if (!this.command) throw new Error('Message or Interaction is required.');
         if (!this.pages) throw new Error('Pages are required.');
         if (this.selectMenu.enable && this.pages.length > 25) throw new Error('Select menu is only available for upto 25 pages.');
         if (!this.selectMenu.enable && (this.buttons.length <= 1 || this.buttons.length >= 6)) throw new Error(`There must be 2, 3, 4 or 5 buttons provided. You provided ${this.buttons.length} buttons.`);
         return await paginationHandler(this);
-        // else if (version < '13.0.0') throw new Error('Discord.js version is not supported.');
     };
 };

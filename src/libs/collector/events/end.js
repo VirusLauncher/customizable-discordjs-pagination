@@ -1,6 +1,6 @@
 module.exports = {
 	name: 'end',
-	async execute({ message, msg, components, footer, pages, paginationCollector }) {
+	async execute({ message, msg, components, paginationCollector }) {
         if (paginationCollector.components === 'disappear') components = [];
         if (paginationCollector.components === 'disable') {
             for (let i = 0; i < components.length; i++) {

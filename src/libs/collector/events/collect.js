@@ -30,7 +30,7 @@ module.exports = {
             await interaction.deferUpdate().catch(() => { });
 			await message.author ?
 			msg.edit({ embeds: [embed(footer, page, pages)], components: components, fetchReply: true }) :
-			message.editReply({ embeds: [embed(footer, page, pages)], components: components, allowedMentions: { repliedUser: false }, ephemeral: paginationCollector.ephemeral });
+			message.editReply({ embeds: [embed(footer, page, pages)], components: components, allowedMentions: { repliedUser: false } });
         }
         else {
             if (!paginationCollector.secondaryUserInteraction) await interaction.reply({ content: paginationCollector.secondaryUserText, ephemeral: true });
