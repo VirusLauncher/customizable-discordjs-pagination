@@ -86,8 +86,8 @@ new Pagination()
 | setPaginationCollector({ parameters }) | ✔️ | Optional Method to set Select Menu Options | 
 | setSelectMenu({ parameters }) | ✔️ | Optional Method to set Collector Options | 
 | setFooter({ parameters }) | ✔️ | Optional Method to set Footer Options |
-| setCustomComponents({ parameters }) | ✔️ | Optional Method to set Footer Options |
-| setCustomComponentsFunction(fn) | ✔️ | Optional Method to set Footer Options |
+| setCustomComponents({ parameters }) | ✔️ | Optional Method to set Custom Component Options |
+| setCustomComponentsFunction(fn) | ✔️ | Optional Method to set Custom Component Function |
 
 ## Optional Methods
 ### setButtons([{ parameters }, { parameters }, ...], position)
