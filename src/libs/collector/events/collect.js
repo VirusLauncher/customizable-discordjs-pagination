@@ -2,9 +2,13 @@ const embed = require('../embed');
 
 let page = 0;
 
+function setPage(number) {
+    page = number;
+}
+
 module.exports = {
 	name: 'collect',
-	async execute({ message, msg, components, footer, pages, paginationCollector, collector }, interaction) {
+	async execute({ message, msg, components, footer, pages, paginationCollector, collector, customComponentsFunction }, interaction) {
         if (interaction.member.user.id === message.member.id || paginationCollector.secondaryUserInteraction) {
             if (paginationCollector.resetTimer) collector.resetTimer(paginationCollector.timeout, paginationCollector.timeout);
             switch (interaction.customId) {
@@ -25,6 +29,9 @@ module.exports = {
                     break;
                 case 'pageMenu':
                     page = Number(interaction.values[0]);
+                    break;
+                default:
+                    await customComponentsFunction({ message, msg, pages, collector, setPage }, interaction)
                     break;
             }
             await interaction.deferUpdate().catch(() => { });

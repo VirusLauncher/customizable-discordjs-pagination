@@ -86,9 +86,11 @@ new Pagination()
 | setPaginationCollector({ parameters }) | ✔️ | Optional Method to set Select Menu Options | 
 | setSelectMenu({ parameters }) | ✔️ | Optional Method to set Collector Options | 
 | setFooter({ parameters }) | ✔️ | Optional Method to set Footer Options |
+| setCustomComponents({ parameters }) | ✔️ | Optional Method to set Footer Options |
+| setCustomComponentsFunction(fn) | ✔️ | Optional Method to set Footer Options |
 
 ## Optional Methods
-### setButtons([{ parameters }, { parameters }, ...])
+### setButtons([{ parameters }, { parameters }, ...], position)
 Default: An Empty Array ( [] )
 
 | Parameter | Type | Details |
@@ -96,6 +98,7 @@ Default: An Empty Array ( [] )
 | label | String | The text to be displayed on this button |
 | emoji | [Emoji](https://discord.js.org/#/docs/discord.js/13.8.0/typedef/EmojiIdentifierResolvable) | The emoji to be displayed on this button |
 | style | [ButtonStyle](https://discord.js.org/#/docs/discord.js/13.8.0/typedef/MessageButtonStyle) | The style of this button |
+| position | Number | Set Position to view(0 - 4); 0 - Top, 4 - Bottom |
 
 ### setFooter({ parameters })
 Defaults:
@@ -117,6 +120,7 @@ Defaults:
 | enable | Boolean | false | Set to true to enable Select Menu |
 | placeholder | String | 'Select Page' | The text to be displayed as placeholder for the Select Menu |
 | pageOnly | Boolean | false | True: Forced Select Menu Options is page numbers; False: Select Menu Options is the Embed Title(if different), otherwise page numbers |
+| position | Number | Set Position to view(0 - 4); 0 - Top, 4 - Bottom |
 
 ### setPaginationCollector({ parameters })
 
@@ -128,6 +132,34 @@ Defaults:
 | secondaryUserInteraction | Boolean | false | Set to true to allow secondary user interaction |
 | secondaryUserText | String | 'This isn\'t your interaction.' | The text to be displayed for the secondary user |
 | timeout | Number | 120000 | The time in milliseconds before the Pagination Collector times out |
+
+### setCustomComponents([{ parameters }, { parameters }, ...])
+Default: An Empty Array ( [] )
+
+| Parameter | Type | Details |
+| --- | --- | --- |
+| component | [ActionRow](https://discord.js.org/#/docs/builders/main/class/ActionRowBuilder) | Represents an action row component |
+| position | Number | Set Position to view(0 - 4); 0 - Top, 4 - Bottom |
+
+### setCustomComponentsFunction(fn)
+
+| Parameter | Type | Details |
+| --- | --- | --- |
+| fn | Function | Function to handle the custom component |
+
+Example:
+```js
+const fn = function ({ message, msg, pages, collector, setPage }, interaction) {
+   switch(interaction.customId) {
+      case 'test':
+         setPage(2);
+         break;
+   }
+}
+
+return new Pagination()
+   .setCustomComponentsFunction(fn)
+```
 
 ## Bots that use this package
 | Avatar | Name |

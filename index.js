@@ -5,7 +5,6 @@ module.exports = class Pagination {
     constructor() {
         this.command = null;
         this.pages = null;
-        this.buttons = [];
         this.paginationCollector = {
             components: 'disable',
             ephemeral: false,
@@ -14,16 +13,23 @@ module.exports = class Pagination {
             secondaryUserText: 'This isn\'t your interaction.',
             timeout: 120000,
         };
-        this.selectMenu = {
-            enable: false,
-            pageOnly: false,
-            placeholder: 'Select Page',
-        };
         this.footer = {
             option: 'default',
             pagePosition: 'left',
             extraText: null,
             iconURL: null,
+        };
+        this.components = {
+            buttons: [],
+            buttonsPosition: 1,
+            selectMenu: {
+                enable: false,
+                pageOnly: false,
+                placeholder: 'Select Page',
+                position: 0,
+            },
+            customComponents: [],
+            customComponentsFunction: function(){ return null; },
         };
     }
 
@@ -61,8 +67,12 @@ module.exports = class Pagination {
      * @example v14 - [{ label: '1', emoji: '1️⃣', style: ButtonStyle.Success }, { label: '2', emoji: '2️⃣', style: ButtonStyle.Success }]
      */
 
-    setButtons(buttons) {
-        this.buttons = buttons || [];
+    setButtons({ buttons, position }) {
+        this.components = {
+            buttons: buttons || [],
+            buttonsPosition: position || 1,
+        };
+        if (this.components.buttonsPosition > 4 && this.components.buttonsPosition < 0) throw new Error('Position must be between 0 and 4.');
         return this;
     };
 
@@ -71,7 +81,7 @@ module.exports = class Pagination {
      * @example setFooter({ option:'default', pagePosition:'left', extraText:'String', enableIconUrl:true, iconURL:'https://somelink.png' });
      **/
 
-     setFooter({ option, pagePosition, extraText, enableIconUrl, iconURL }) {
+    setFooter({ option, pagePosition, extraText, enableIconUrl, iconURL }) {
         if (option?.toLowerCase() !== 'default' || option?.toLowerCase() !== 'none' || option?.toLowerCase() !== 'user') this.footer.option = 'default';
         this.footer = {
             option: option?.toLowerCase() || 'default',
@@ -108,21 +118,47 @@ module.exports = class Pagination {
      * setSelectMenu({ enable:true, pageOnly:true, placeholder:'Select Page' });
      **/
 
-    setSelectMenu({ enable, pageOnly, placeholder }) {
-        this.selectMenu = {
+    setSelectMenu({ enable, pageOnly, placeholder, position }) {
+        this.components.selectMenu = {
             enable: enable || false,
             pageOnly: pageOnly || false,
             placeholder: placeholder || 'Select Page',
+            position: position || 0,
         };
+        if (this.components.selectMenu.position > 4 && this.components.selectMenu.position < 0) throw new Error('Position must be between 0 and 4.');
         return this;
     };
+
+    /**
+     * @param {[{row:ActionRowBuilder,position:Number}]} customComponents - Custom Components Options
+     * @example setCustomComponents({[{ row: new ActionRowBuilder().addComponents(component), position: 1 }, ...]});
+     **/
+
+    setCustomComponents({ row }) {
+        row.forEach(element => {
+            if (element?.position > 4 && element?.position < 0) throw new Error('Position must be between 0 and 4.');
+            if (!(element?.position)) element.position = null;
+        });
+        this.components.customComponents = row || [];
+        return this;
+    }
+
+    /**
+     * @param {fn} customComponents - Custom Components Function
+     * @example setCustomComponentsFunction(fn);
+     **/
+
+    setCustomComponentsFunction(fn) {
+        this.components.customComponentsFunction = fn || function(){ return null; };
+        return this;
+    }
 
     async send() {
         if (version < '13.0.0') throw new Error('Discord.js version 12 and below is not supported.');
         if (!this.command) throw new Error('Message or Interaction is required.');
         if (!this.pages) throw new Error('Pages are required.');
-        if (this.selectMenu.enable && this.pages.length > 25) throw new Error('Select menu is only available for upto 25 pages.');
-        if (!this.selectMenu.enable && (this.buttons.length <= 1 || this.buttons.length >= 6)) throw new Error(`There must be 2, 3, 4 or 5 buttons provided. You provided ${this.buttons.length} buttons.`);
+        if (this.components.selectMenu.enable && this.pages.length > 25) throw new Error('Select menu is only available for upto 25 pages.');
+        if (!this.components.selectMenu.enable && (this.components.buttons.length <= 1 || this.components.buttons.length >= 6)) throw new Error(`There must be 2, 3, 4 or 5 buttons provided. You provided ${this.buttons.length} buttons.`);
         return await paginationHandler(this);
     };
 };
