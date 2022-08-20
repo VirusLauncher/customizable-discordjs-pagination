@@ -36,10 +36,8 @@ module.exports = class Pagination {
     setCommand(command) {
         if (!command) throw new Error('Message or Interaction is required.');
         this.command = command;
-        this.footer = {
-            extraText: `Requested by ${this.command.member.user.tag}`,
-            iconURL: this.command.author ? this.command.author.displayAvatarURL({ dynamic: true }) : this.command.user.displayAvatarURL({ dynamic: true }),
-        };
+        this.footer.extraText = `Requested by ${this.command.member.user.tag}`;
+        this.footer.iconURL = this.command.author ? this.command.author.displayAvatarURL({ dynamic: true }) : this.command.user.displayAvatarURL({ dynamic: true });
         return this;
     };
 
