@@ -42,10 +42,8 @@ module.exports = class Pagination {
     setCommand(command) {
         if (!command) throw new Error('Message or Interaction is required.');
         this.command = command;
-        this.footer = {
-            extraText: `Requested by ${this.command.member.user.tag}`,
-            iconURL: this.command.author ? this.command.author.displayAvatarURL({ dynamic: true }) : this.command.user.displayAvatarURL({ dynamic: true }),
-        };
+        this.footer.extraText = `Requested by ${this.command.member.user.tag}`;
+        this.footer.iconURL = this.command.author ? this.command.author.displayAvatarURL({ dynamic: true }) : this.command.user.displayAvatarURL({ dynamic: true });
         return this;
     };
 
@@ -68,10 +66,8 @@ module.exports = class Pagination {
      */
 
     setButtons({ buttons, position }) {
-        this.components = {
-            buttons: buttons || [],
-            buttonsPosition: position || 1,
-        };
+        this.components.buttons = buttons || [];
+        this.components.buttonsPosition = position || 1;
         if (this.components.buttonsPosition > 4 && this.components.buttonsPosition < 0) throw new Error('Position must be between 0 and 4.');
         return this;
     };
