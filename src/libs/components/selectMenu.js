@@ -1,4 +1,4 @@
-const { ActionRowBuilder, MessageActionRow, MessageSelectMenu, SelectMenuBuilder, version } = require('discord.js');
+const { ActionRowBuilder, MessageActionRow, MessageSelectMenu, StringSelectMenuBuilder, version } = require('discord.js');
 
 module.exports = (pages, selectMenu) => {
     if (!(selectMenu.enable)) return null;
@@ -37,7 +37,7 @@ module.exports = (pages, selectMenu) => {
         return new MessageActionRow().addComponents(pageMenu);
     }
 
-    pageMenu = new SelectMenuBuilder()
+    pageMenu = new StringSelectMenuBuilder()
         .setCustomId('pageMenu')
         .setOptions(pageOption)
         .setPlaceholder(selectMenu.placeholder);
