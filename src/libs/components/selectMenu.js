@@ -4,12 +4,12 @@ module.exports = (pages, selectMenu) => {
     if (!(selectMenu.enable)) return null;
 
     let tempTitle = null;
-    (version < '14.0.0') ? tempTitle = pages[0].title : tempTitle = pages[0].data.title;
+    (compareVersion(version, '14.0.0') === -1) ? tempTitle = pages[0].title : tempTitle = pages[0].data.title;
     let pageOption = [];
     let pageMenu;
 
     for (let i = 0; i < pages.length; i++) {
-        if (!selectMenu.pageOnly && tempTitle !== (version < '14.0.0' ? pages[i].title : pages[i].data.title)) {
+        if (!selectMenu.pageOnly && tempTitle !== (compareVersion(version, '14.0.0') === -1 ? pages[i].title : pages[i].data.title)) {
             pageOption = [];
             break;
         };
@@ -22,13 +22,13 @@ module.exports = (pages, selectMenu) => {
     if (pageOption.length === 0) {
         for (let i = 0; i < pages.length; i++) {
             pageOption.push({
-                label: `${(version < '14.0.0' ? pages[i].title : pages[i].data.title)}`,
+                label: `${(compareVersion(version, '14.0.0') === -1 ? pages[i].title : pages[i].data.title)}`,
                 value: `${i}`,
             });
         }
     }
 
-    if (version < '14.0.0') {
+    if (compareVersion(version, '14.0.0') === -1) {
         pageMenu = new MessageSelectMenu()
             .setCustomId('pageMenu')
             .setOptions(pageOption)
@@ -36,18 +36,33 @@ module.exports = (pages, selectMenu) => {
 
         return new MessageActionRow().addComponents(pageMenu);
     }
-    else if (version >= '14.7.0') {
+    else if (compareVersion(version, '14.6.0') === 1) {
         pageMenu = new StringSelectMenuBuilder()
-        .setCustomId('pageMenu')
-        .setOptions(pageOption)
-        .setPlaceholder(selectMenu.placeholder);
+            .setCustomId('pageMenu')
+            .setOptions(pageOption)
+            .setPlaceholder(selectMenu.placeholder);
     }
     else {
-    pageMenu = new SelectMenuBuilder()
-        .setCustomId('pageMenu')
-        .setOptions(pageOption)
-        .setPlaceholder(selectMenu.placeholder);
+        pageMenu = new SelectMenuBuilder()
+            .setCustomId('pageMenu')
+            .setOptions(pageOption)
+            .setPlaceholder(selectMenu.placeholder);
     }
 
     return new ActionRowBuilder().addComponents(pageMenu);
+}
+
+function compareVersion(v1, v2) {
+    if (typeof v1 !== 'string') return false;
+    if (typeof v2 !== 'string') return false;
+    v1 = v1.split('.');
+    v2 = v2.split('.');
+    const k = Math.min(v1.length, v2.length);
+    for (let i = 0; i < k; ++i) {
+        v1[i] = parseInt(v1[i], 10);
+        v2[i] = parseInt(v2[i], 10);
+        if (v1[i] > v2[i]) return 1;
+        if (v1[i] < v2[i]) return -1;
+    }
+    return v1.length == v2.length ? 0 : (v1.length < v2.length ? -1 : 1);
 }
