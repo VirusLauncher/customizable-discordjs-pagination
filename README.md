@@ -99,7 +99,7 @@ Default: An Empty Array ( [] )
 
 ### setFooter({ parameters })
 Defaults:
-- {User Tag} - message.member.user.tag || interaction.member.user.tag
+- {UserName} - message.member.user.username
 - {User Avatar} - message.author.displayAvatarURL({ dynamic: true }) || interaction.user.displayAvatarURL({ dynamic: true })
 
 | Parameter | Type | Default | Details |

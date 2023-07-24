@@ -36,7 +36,7 @@ module.exports = class Pagination {
     setCommand(command) {
         if (!command) throw new Error('Message or Interaction is required.');
         this.command = command;
-        this.footer.extraText = `Requested by ${this.command.member.user.tag}`;
+        this.footer.extraText = `Requested by ${this.command.member.user.username}`;
         this.footer.iconURL = this.command.author ? this.command.author.displayAvatarURL({ dynamic: true }) : this.command.user.displayAvatarURL({ dynamic: true });
         return this;
     };
@@ -69,12 +69,12 @@ module.exports = class Pagination {
      * @example setFooter({ option:'default', pagePosition:'left', extraText:'String', enableIconUrl:true, iconURL:'https://somelink.png' });
      **/
 
-     setFooter({ option, pagePosition, extraText, enableIconUrl, iconURL }) {
+    setFooter({ option, pagePosition, extraText, enableIconUrl, iconURL }) {
         if (option?.toLowerCase() !== 'default' || option?.toLowerCase() !== 'none' || option?.toLowerCase() !== 'user') this.footer.option = 'default';
         this.footer = {
             option: option?.toLowerCase() || 'default',
             pagePosition: pagePosition?.toLowerCase() || 'left',
-            extraText: extraText || `Requested by ${this.command.member.user.tag}`,
+            extraText: extraText || `Requested by ${this.command.member.user.username}`,
             iconURL: iconURL || this.command.author ? this.command.author.displayAvatarURL({ dynamic: true }) : this.command.user.displayAvatarURL({ dynamic: true }),
         };
         if (enableIconUrl === false) this.footer.iconURL = null;
