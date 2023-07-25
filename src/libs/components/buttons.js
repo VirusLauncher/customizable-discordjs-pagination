@@ -27,14 +27,14 @@ module.exports = (buttons) => {
 
         let perButton = null;
         if (compareVersion(version, '14.0.0') === -1) {
-            if (buttons[i].style === 'LINK') throw new Error(`Link styles cannot be used in this package.  Check button array position ${i}`);
+            if (buttons[i].style.toLowerCase() === 'link') throw new Error(`Link styles cannot be used in this package. Check button array position ${i}`);
 
             perButton = new MessageButton()
                 .setStyle(buttons[i].style)
                 .setCustomId(buttonId[i]);
         }
         else if (compareVersion(version, '14.0.0') === 1) {
-            if (buttons[i].style === ButtonStyle.Link) throw new Error(`Link styles cannot be used in this package.  Check button array position ${i}`);
+            if (buttons[i].style === ButtonStyle.Link) throw new Error(`Link styles cannot be used in this package. Check button array position ${i}`);
 
             perButton = new ButtonBuilder()
                 .setStyle(buttons[i].style)
