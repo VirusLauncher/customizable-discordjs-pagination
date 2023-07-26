@@ -47,6 +47,26 @@ module.exports = class Pagination {
     };
 
     /**
+     * @param {[{row:ActionRowBuilder,position:Number}]} customComponents - Custom Components Options
+     * @example setCustomComponents([ new ActionRowBuilder().addComponents(component), ...]);
+     **/
+
+    setCustomComponents(components) {
+        this.components.customComponents = components || [];
+        return this;
+    }
+    
+    /**
+     * @param {fn} customComponents - Custom Components Function
+     * @example setCustomComponentsFunction(fn);
+     **/
+    
+    setCustomComponentsFunction(fn) {
+        this.components.customComponentsFunction = fn || function(){ return null; };
+        return this;
+    }
+
+    /**
      * @param {[Embeds]} pages - Array of Embeds
      * @example v13 - [new MessageEmbed().setTitle('Page 1'), new MessageEmbed().setTitle('Page 2')]
      * @example v14 - [new EmbedBuilder().setTitle('Page 1'), new EmbedBuilder().setTitle('Page 2')]
@@ -121,32 +141,12 @@ module.exports = class Pagination {
         return this;
     };
 
-        /**
-     * @param {[{row:ActionRowBuilder,position:Number}]} customComponents - Custom Components Options
-     * @example setCustomComponents([ new ActionRowBuilder().addComponents(component), ...]);
-     **/
-
-    setCustomComponents(components) {
-        this.components.customComponents = components || [];
-        return this;
-    }
-    
-    /**
-     * @param {fn} customComponents - Custom Components Function
-     * @example setCustomComponentsFunction(fn);
-     **/
-    
-    setCustomComponentsFunction(fn) {
-        this.components.customComponentsFunction = fn || function(){ return null; };
-        return this;
-    }
-
     async send() {
         if (version < '13.0.0') throw new Error('Discord.js version 12 and below is not supported.');
         if (!this.command) throw new Error('Message or Interaction is required.');
         if (!this.pages) throw new Error('Pages are required.');
         if (this.components.selectMenu.enable && this.pages.length > 25) throw new Error('Select menu is only available for upto 25 pages.');
         if (!this.components.selectMenu.enable && (this.components.buttons.length <= 1 || this.components.buttons.length >= 6)) throw new Error(`There must be at least 2 and no more than 5 buttons provided. You provided ${this.components.buttons.length} buttons.`);
-        return await paginationHandler(this);
+        return paginationHandler(this);
     };
 };

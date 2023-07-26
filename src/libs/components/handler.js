@@ -10,7 +10,6 @@ module.exports = (componentsData, pages) => {
     else if (selectMenu && buttons) components = [selectMenu, buttons];
     else if (!selectMenu && buttons) components = [buttons];
 
-    console.log(componentsData.customComponents);
     if (componentsData.customComponents.length > 0) {
         componentsData.customComponents.forEach(customComponent => {
             components.push(customComponent);
@@ -18,6 +17,5 @@ module.exports = (componentsData, pages) => {
     }
     if (components.length > 5) throw new Error('There shouldn\'t have more than 5 components.')
 
-    console.log(components);
     return components;
 }
