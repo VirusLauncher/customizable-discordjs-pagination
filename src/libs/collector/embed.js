@@ -26,5 +26,5 @@ module.exports = function (footer, page, pages) {
             }
             break;
     }
-    return pages[page].setFooter({ text: text, iconURL: footer.iconURL });
+    return pages[page].setFooter({ text: text, iconURL: iconUrl });
 }
