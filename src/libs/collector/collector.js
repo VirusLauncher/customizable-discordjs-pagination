@@ -2,7 +2,7 @@ const { InteractionCollector } = require('discord.js');
 const { readdirSync } = require('fs');
 const path = require('path');
 
-module.exports = async (message, msg, components, footer, pages, paginationCollector) => {
+module.exports = async (message, msg, components, footer, pages, paginationCollector, customComponentsFunction) => {
     const collector = new InteractionCollector(message.client, {
         message: message.author ? msg : await message.fetchReply(),
         time: paginationCollector.timeout,
@@ -13,6 +13,6 @@ module.exports = async (message, msg, components, footer, pages, paginationColle
     for (const file of collectorFiles) {
         const filePath = path.join(collectorPath, file);
         const event = require(filePath);
-        collector.on(event.name, (...args) => event.execute({ message, msg, components, footer, pages, paginationCollector, collector }, ...args));
+        collector.on(event.name, (...args) => event.execute({ message, msg, components, footer, pages, paginationCollector, collector, customComponentsFunction }, ...args));
     }
 }

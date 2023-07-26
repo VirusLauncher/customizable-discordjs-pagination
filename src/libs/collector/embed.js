@@ -1,11 +1,16 @@
 module.exports = function (footer, page, pages) {
+    let text = '';
+    let iconUrl = '';
+
     switch(footer.option) {
         case 'user':
             return pages[page];
         case 'none':
-            return pages[page].setFooter({ text: null, iconURL: null });
+            text = null;
+            iconUrl = null;
+            break;
         case 'default':
-            let text = '';
+            iconUrl = footer.iconURL;
             switch (footer.pagePosition) {
                 case 'left':
                     footer.extraText ? text = `Page ${page + 1} / ${pages.length} • ${footer.extraText}` : text = `Page ${page + 1} / ${pages.length}`;
@@ -19,9 +24,6 @@ module.exports = function (footer, page, pages) {
                 default:
                     throw new Error('Invalid page footer position. Valid positions are left, right, none');
             }
-            return pages[page].setFooter({
-                text: text,
-                iconURL: footer.iconURL,
-            });
     }
+    return pages[page].setFooter({ text: text, iconURL: iconUrl });
 }

@@ -6,9 +6,10 @@ module.exports = (pages, selectMenu) => {
     if (!(selectMenu.enable)) return null;
 
     let tempTitle = null;
-    (compareVersion(version, '14.0.0') === -1) ? tempTitle = pages[0].title : tempTitle = pages[0].data.title;
     let pageOption = [];
     let pageMenu;
+
+    (compareVersion(version, '14.0.0') === -1) ? tempTitle = pages[0].title : tempTitle = pages[0].data.title;
 
     for (let i = 0; i < pages.length; i++) {
         if (!selectMenu.pageOnly && tempTitle !== (compareVersion(version, '14.0.0') === -1 ? pages[i].title : pages[i].data.title)) {

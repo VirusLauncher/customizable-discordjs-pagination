@@ -1,6 +1,6 @@
 {
   "name": "customizable-discordjs-pagination",
-  "version": "2.0.3",
+  "version": "2.1.0",
   "description": "A Fully Customizable Embed Pagination for DiscordJS",
   "main": "index.js",
   "scripts": {
@@ -10,6 +10,7 @@
     "discordjs-pagination",
     "customizable-pagination",
     "customizable-embed-pagination",
+    "discordjs",
     "discordjs-13",
     "discordjs-14",
     "discordjs-v13",

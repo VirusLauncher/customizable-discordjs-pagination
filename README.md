@@ -63,6 +63,7 @@ new Pagination()
 ##### 5 Buttons - First, Previous, Stop, Next, Last
 ![Imgur](https://imgur.com/vKgBYog.jpg)
 
+
 ## Documentation
 - For DiscordJS V13/V14:
 ```js
@@ -73,6 +74,8 @@ new Pagination()
    .setPaginationCollector({ timeout: 120000 })
    .setSelectMenu({ enable: true })
    .setFooter({ enable: true })
+   .setCustomComponents([])
+   .setCustomComponentsFunction(fn)
    .send();
 ```
 
@@ -86,6 +89,8 @@ new Pagination()
 | setPaginationCollector({ parameters }) | ✔️ | Optional Method to set Select Menu Options | 
 | setSelectMenu({ parameters }) | ✔️ | Optional Method to set Collector Options | 
 | setFooter({ parameters }) | ✔️ | Optional Method to set Footer Options |
+| setCustomComponents({ parameters }) | ✔️ | Optional Method to set Custom Component Options |
+| setCustomComponentsFunction(fn) | ✔️ | Optional Method to set Custom Component Function |
 
 ## Optional Methods
 ### setButtons([{ parameters }, { parameters }, ...])
@@ -95,7 +100,6 @@ Default: An Empty Array ( [] )
 | --- | --- | --- |
 | label | String | The text to be displayed on this button |
 | emoji | [Emoji](https://discord.js.org/#/docs/discord.js/13.8.0/typedef/EmojiIdentifierResolvable) | The emoji to be displayed on this button |
-| style | [ButtonStyle](https://discord.js.org/#/docs/discord.js/13.8.0/typedef/MessageButtonStyle) | The style of this button |
 
 ### setFooter({ parameters })
 Defaults:
@@ -125,9 +129,38 @@ Defaults:
 | components | String | 'disable' | Options: 'disable' - Disables the components at the end ; 'disappear' - Remove the components at the end |
 | ephemeral | Boolean | false | Set to true to make the Pagination Collector ephemeral |
 | resetTimer | Boolean | true | Set to true to reset the Pagination Collector timer |
+| startingPage | Number | 1 | Set Default Page Number |
 | secondaryUserInteraction | Boolean | false | Set to true to allow secondary user interaction |
 | secondaryUserText | String | 'This isn\'t your interaction.' | The text to be displayed for the secondary user |
 | timeout | Number | 120000 | The time in milliseconds before the Pagination Collector times out |
+
+### setCustomComponents([component, ...])
+Default: An Empty Array ( [] )
+
+| Parameter | Type | Details |
+| --- | --- | --- |
+| component | [ActionRow](https://discord.js.org/#/docs/builders/main/class/ActionRowBuilder) | Represents an action row component |
+
+### setCustomComponentsFunction(fn)
+
+| Parameter | Type | Details |
+| --- | --- | --- |
+| fn | Function | Function to handle the custom component |
+
+Example:
+```js
+const fn = function ({ message, msg, pages, collector, setPage }, interaction) {
+   switch(interaction.customId) {
+      case 'test':
+         setPage(2);
+         break;
+   }
+}
+
+return new Pagination()
+   .setCustomComponentsFunction(fn)
+   . ...
+```
 
 ## Bots that use this package
 | Avatar | Name |
