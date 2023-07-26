@@ -24,7 +24,6 @@ module.exports = function (footer, page, pages) {
                 default:
                     throw new Error('Invalid page footer position. Valid positions are left, right, none');
             }
-            break;
     }
     return pages[page].setFooter({ text: text, iconURL: iconUrl });
 }

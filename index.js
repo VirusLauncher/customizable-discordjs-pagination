@@ -147,6 +147,6 @@ module.exports = class Pagination {
         if (!this.pages) throw new Error('Pages are required.');
         if (this.components.selectMenu.enable && this.pages.length > 25) throw new Error('Select menu is only available for upto 25 pages.');
         if (!this.components.selectMenu.enable && (this.components.buttons.length <= 1 || this.components.buttons.length >= 6)) throw new Error(`There must be at least 2 and no more than 5 buttons provided. You provided ${this.components.buttons.length} buttons.`);
-        return paginationHandler(this);
+        return await paginationHandler(this);
     };
 };
