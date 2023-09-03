@@ -46,7 +46,7 @@ module.exports = {
                     page = Number(interaction.values[0]);
                     break;
                 default:
-                    await customComponentsFunction({ message, msg, embedPages, collector, setPage }, interaction)
+                    await customComponentsFunction({ message, msg, embedPages, collector, setPage, setPages }, interaction)
                     break;
             }
             await interaction.deferUpdate().catch(() => { });

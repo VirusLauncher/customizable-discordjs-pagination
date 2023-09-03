@@ -149,7 +149,7 @@ Default: An Empty Array ( [] )
 
 Example:
 ```js
-const fn = function ({ message, msg, pages, collector, setPage }, interaction) {
+const customFn = function fn({ message, msg, pages, collector, setPage, setPages }, interaction) {
    switch(interaction.customId) {
       case 'test':
          setPage(2);
@@ -158,7 +158,7 @@ const fn = function ({ message, msg, pages, collector, setPage }, interaction) {
 }
 
 return new Pagination()
-   .setCustomComponentsFunction(fn)
+   .setCustomComponentsFunction(customFn)
    . ...
 ```
 
