@@ -1,6 +1,8 @@
 const embed = require('../embed');
 const { getComponents } = require('../../versions/versionManager');
 
+const paginationStates = new Map();
+
 class PaginationState {
     constructor(startingPage, pages) {
         this.page = Math.max(0, Math.min(startingPage - 1, pages.length - 1));
@@ -68,11 +70,15 @@ const updateEmbed = async (state, context) => {
     }
 };
 
+const getMessageId = async (message, msg) => {
+    return message.author ? msg.id : (await message.fetchReply()).id;
+};
+
 module.exports = {
 	name: 'collect',
 	async execute(context, interaction) {
         try {
-            const { message, paginationCollector, collector, pages } = context;
+            const { message, msg, paginationCollector, collector, pages } = context;
             const { interactions } = getComponents();
             
             await interactions.deferUpdate(interaction);
@@ -92,8 +98,16 @@ module.exports = {
 
             if (paginationCollector.resetTimer) collector.resetTimer(paginationCollector.timeout, paginationCollector.timeout);
 
-            // Create a new state instance for this specific pagination
-            const state = new PaginationState(paginationCollector.startingPage, pages);
+            const messageId = await getMessageId(message, msg);
+            let state = paginationStates.get(messageId);
+            if (!state) {
+                state = new PaginationState(paginationCollector.startingPage, pages);
+                paginationStates.set(messageId, state);
+                
+                collector.once('end', () => {
+                    paginationStates.delete(messageId);
+                });
+            }
 
             switch (interaction.customId) {
                 case 'firstBtn':
