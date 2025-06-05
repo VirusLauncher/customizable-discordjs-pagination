@@ -2,19 +2,30 @@ const embed = require('../embed');
 const { getComponents } = require('../../versions/versionManager');
 
 class PaginationState {
-    constructor(startingPage, pages) {
-        this.page = startingPage - 1;
-        this.pages = pages;
+    constructor() {
+        this.page = 0;
+        this.pages = null;
+        this.isInitialized = false;
     }
 
     setPage(number) {
         if (!number || typeof number !== 'number') throw new Error('A valid page number is required.');
+        
         this.page = number - 1;
     }
 
     setPages(pages) {
         if (!pages || !Array.isArray(pages)) throw new Error('Valid pages array is required.');
+        
         this.pages = pages;
+    }
+
+    initialize(startingPage, pages) {
+        if (!this.isInitialized) {
+            this.page = startingPage - 1;
+            this.setPages(pages);
+            this.isInitialized = true;
+        }
     }
 
     navigate(action, totalPages) {
@@ -35,7 +46,9 @@ class PaginationState {
     }
 }
 
-const handleCustomInteraction = async (state, context, interaction) => {
+const state = new PaginationState();
+
+const handleCustomInteraction = async (context, interaction) => {
     const { message, msg, collector, customComponentsFunction } = context;
     await customComponentsFunction({ 
         message, 
@@ -47,7 +60,7 @@ const handleCustomInteraction = async (state, context, interaction) => {
     }, interaction);
 };
 
-const updateEmbed = async (state, context) => {
+const updateEmbed = async (context) => {
     const { message, msg, components, footer } = context;
     const options = { 
         embeds: [embed(footer, state.page, state.pages)], 
@@ -82,7 +95,7 @@ module.exports = {
 
             if (paginationCollector.resetTimer) collector.resetTimer(paginationCollector.timeout, paginationCollector.timeout);
 
-            const state = new PaginationState(paginationCollector.startingPage, pages);
+            state.initialize(paginationCollector.startingPage, pages);
 
             switch (interaction.customId) {
                 case 'firstBtn':
@@ -104,11 +117,11 @@ module.exports = {
                     state.page = Number(interaction.values[0]);
                     break;
                 default:
-                    await handleCustomInteraction(state, context, interaction);
+                    await handleCustomInteraction(context, interaction);
                     break;
             }
 
-            await updateEmbed(state, context);
+            await updateEmbed(context);
         } catch (error) {
             console.error('Pagination interaction error:', error);
         }
