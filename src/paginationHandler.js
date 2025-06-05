@@ -11,27 +11,26 @@ const validateData = (data) => {
     // Required data validation
     if (!data) throw new Error('Pagination data is required');
     if (!command) throw new Error('Message or Interaction is required');
-    if (!pages || !Array.isArray(data.pages)) throw new Error('Valid pages array is required');
+    if (!pages || !Array.isArray(pages)) throw new Error('Valid pages array is required');
 
     // Component-specific validation
-    if (selectMenu?.enable && data.pages.length > 25) throw new Error('Select menu is only available for up to 25 pages.');
+    if (selectMenu?.enable && pages.length > 25) throw new Error('Select menu is only available for up to 25 pages.');
     if (!selectMenu?.enable && (!buttons?.length || buttons.length < 2 || buttons.length > 5)) throw new Error(`There must be at least 2 and no more than 5 buttons provided. You provided ${buttons?.length || 0} buttons.`);
-    
 };
 
 module.exports = async (data) => {
     try {
         validateData(data);
         
-        const components = await componentsHandler(data.components, data.pages);
+        const components = await componentsHandler(data.component, data.pages);
         
         return await collectorHandler(
             data.command, 
             components, 
-            data.footer, 
+            data.component.footer, 
             data.pages, 
-            data.paginationCollector, 
-            data.components.customComponentsFunction
+            data.collector, 
+            data.component?.customComponentsFunction
         );
     } catch (error) {
         console.error('Pagination error:', error);

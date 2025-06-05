@@ -2,10 +2,11 @@ const { MessageFlags } = require('discord.js');
 
 module.exports = {
     replyToInteraction: async (interaction, content, isEphemeral = false) => {
-        return await interaction.reply({
+        const options = {
             content,
-            flags: isEphemeral ? MessageFlags.Ephemeral : 0
-        });
+            flags: isEphemeral ? MessageFlags.Ephemeral : undefined
+        };
+        return await interaction.reply(options);
     },
 
     editReply: async (interaction, options) => {
@@ -16,6 +17,10 @@ module.exports = {
     },
 
     deferUpdate: async (interaction) => {
-        return await interaction.deferUpdate();
+        try {
+            return await interaction.deferUpdate();
+        } catch (error) {
+            console.error('Failed to defer interaction update:', error);
+        }
     }
 }; 

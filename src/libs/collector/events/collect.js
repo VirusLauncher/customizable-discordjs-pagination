@@ -2,30 +2,19 @@ const embed = require('../embed');
 const { getComponents } = require('../../versions/versionManager');
 
 class PaginationState {
-    constructor() {
-        this.page = 0;
-        this.pages = null;
-        this.isInitialized = false;
+    constructor(startingPage, pages) {
+        this.page = startingPage - 1;
+        this.pages = pages;
     }
 
     setPage(number) {
         if (!number || typeof number !== 'number') throw new Error('A valid page number is required.');
-        
         this.page = number - 1;
     }
 
     setPages(pages) {
         if (!pages || !Array.isArray(pages)) throw new Error('Valid pages array is required.');
-        
         this.pages = pages;
-    }
-
-    initialize(startingPage, pages) {
-        if (!this.isInitialized) {
-            this.page = startingPage - 1;
-            this.setPages(pages);
-            this.isInitialized = true;
-        }
     }
 
     navigate(action, totalPages) {
@@ -46,9 +35,7 @@ class PaginationState {
     }
 }
 
-const state = new PaginationState();
-
-const handleCustomInteraction = async (context, interaction) => {
+const handleCustomInteraction = async (state, context, interaction) => {
     const { message, msg, collector, customComponentsFunction } = context;
     await customComponentsFunction({ 
         message, 
@@ -60,7 +47,7 @@ const handleCustomInteraction = async (context, interaction) => {
     }, interaction);
 };
 
-const updateEmbed = async (context) => {
+const updateEmbed = async (state, context) => {
     const { message, msg, components, footer } = context;
     const options = { 
         embeds: [embed(footer, state.page, state.pages)], 
@@ -74,51 +61,56 @@ const updateEmbed = async (context) => {
 module.exports = {
 	name: 'collect',
 	async execute(context, interaction) {
-        const { message, paginationCollector, collector, pages } = context;
-        const { interactions } = getComponents();
-        
-        const isAuthorized = interaction.member.user.id === message.member.id || paginationCollector.secondaryUserInteraction;
+        try {
+            const { message, paginationCollector, collector, pages } = context;
+            const { interactions } = getComponents();
+            
+            await interactions.deferUpdate(interaction);
 
-        if (!isAuthorized) {
-            if (!paginationCollector.secondaryUserInteraction) {
-                await interactions.replyToInteraction(
-                    interaction,
-                    paginationCollector.secondaryUserText,
-                    true
-                );
+            const isAuthorized = interaction.member.user.id === message.member.id || paginationCollector.secondaryUserInteraction;
+
+            if (!isAuthorized) {
+                if (!paginationCollector.secondaryUserInteraction) {
+                    await interactions.replyToInteraction(
+                        interaction,
+                        paginationCollector.secondaryUserText,
+                        true
+                    );
+                }
+                return;
             }
-            return;
+
+            if (paginationCollector.resetTimer) collector.resetTimer(paginationCollector.timeout, paginationCollector.timeout);
+
+            const state = new PaginationState(paginationCollector.startingPage, pages);
+
+            switch (interaction.customId) {
+                case 'firstBtn':
+                    state.navigate('first');
+                    break;
+                case 'lastBtn':
+                    state.navigate('last', state.pages.length);
+                    break;
+                case 'prevBtn':
+                    state.navigate('prev', state.pages.length);
+                    break;
+                case 'nextBtn':
+                    state.navigate('next', state.pages.length);
+                    break;
+                case 'stopBtn':
+                    collector.stop();
+                    break;
+                case 'pageMenu':
+                    state.page = Number(interaction.values[0]);
+                    break;
+                default:
+                    await handleCustomInteraction(state, context, interaction);
+                    break;
+            }
+
+            await updateEmbed(state, context);
+        } catch (error) {
+            console.error('Pagination interaction error:', error);
         }
-
-        if (paginationCollector.resetTimer) collector.resetTimer(paginationCollector.timeout, paginationCollector.timeout);
-
-        state.initialize(paginationCollector.startingPage, pages);
-
-        switch (interaction.customId) {
-            case 'firstBtn':
-                state.navigate('first');
-                break;
-            case 'lastBtn':
-                state.navigate('last', state.pages.length);
-                break;
-            case 'prevBtn':
-                state.navigate('prev', state.pages.length);
-                break;
-            case 'nextBtn':
-                state.navigate('next', state.pages.length);
-                break;
-            case 'stopBtn':
-                collector.stop();
-                break;
-            case 'pageMenu':
-                state.page = Number(interaction.values[0]);
-                break;
-            default:
-                await handleCustomInteraction(context, interaction);
-                break;
-        }
-
-        await interactions.deferUpdate(interaction);
-        await updateEmbed(context);
 	},
 };
