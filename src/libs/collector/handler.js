@@ -2,10 +2,29 @@ const embed = require('./embed')
 const collector = require('./collector');
 
 module.exports = async (message, components, footer, pages, paginationCollector, customComponentsFunction) => {
-    let msg;
-    await (message.isReplied || message.deferred ?
-        message.editReply({ embeds: [embed(footer, paginationCollector.startingPage - 1, pages)], components: components, ephemeral: paginationCollector.ephemeral }).then((m) => { msg = m }) :
-        message.reply({ embeds: [embed(footer, paginationCollector.startingPage - 1, pages)], components: components, ephemeral: paginationCollector.ephemeral }).then((m) => { msg = m })).catch();
+    try {
+        const initialEmbed = embed(footer, paginationCollector.startingPage - 1, pages);
+        const options = { 
+            embeds: [initialEmbed], 
+            components, 
+            ephemeral: paginationCollector.ephemeral,
+        };
 
-    return await collector(message, msg, components, footer, pages, paginationCollector, customComponentsFunction);
+        const msg = await (message.isReplied || message.deferred
+            ? message.editReply(options)
+            : message.reply(options));
+
+        return await collector(
+            message, 
+            msg, 
+            components, 
+            footer, 
+            pages, 
+            paginationCollector, 
+            customComponentsFunction
+        );
+    } catch (error) {
+        console.error('Pagination error:', error);
+        throw new Error('Failed to initialize pagination');
+    }
 }
