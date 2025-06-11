@@ -56,7 +56,7 @@ module.exports = async (message, msg, components, footer, pages, paginationColle
         activeCollectors.delete(messageId);
     });
 
-    events.forEach(({ event, name }) => {
+    events.forEach(({ event }) => {
         collector.on(event.name, (...args) => 
             event.execute(eventContext, ...args)
         );

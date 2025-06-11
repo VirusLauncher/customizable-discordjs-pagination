@@ -1,4 +1,3 @@
-const { version } = require('discord.js');
 const paginationHandler = require('./src/paginationHandler');
 
 module.exports = class Pagination {
